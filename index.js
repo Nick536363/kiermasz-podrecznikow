@@ -14,21 +14,29 @@ app.use(session({
     resave: false
 }))
 
+app.use(express.urlencoded({ extended: true }))
+
 app.get("/", (req, res) => {
-    if(!session.userID){
-        res.redirect("/login")
+    if(!req.session.user){
+        return res.redirect("/login")
     }
+    res.sendFile(__dirname+"/templates/tables.html")
 })
 
 app.post("/", (req, res) => {
     const user = req.body.user
-    console.log(user)
-    const salt = database.prepare("SELECT salt FROM users WHERE username = ?").get(user)
-    const hashed_passwd = crypto.scrypt(req.body.passwd, salt, 64, (err, derivedKey) => {if(err){throw err} console.log(derivedKey.toString("hex"))})
-    if(hashed_passwd == database.prepare("SELECT password FROM users WHERE username = ?").get(user)){
-        session.userID = database.prepare("SELECT uID FROM users WHERE username = ?").get(user)
-        res.redirect("/")
+    const data = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?").get(user)
+    if(!data){
+        res.redirect("/login")
+        return
     }
+    const salt = data.salt
+    const hashed_passwd = crypto.scryptSync(req.body.passwd, salt, 64).toString("hex")
+    if(hashed_passwd == data.password){
+        req.session.user = data.uID
+        return res.redirect("/")
+    }
+    return res.redirect("/login")
 })
 
 app.get("/login", (req, res) => {
