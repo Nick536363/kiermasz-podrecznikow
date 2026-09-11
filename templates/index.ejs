@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            text-align: center;
+        }
+
+        body {
+            background-color: #5A9586;
+        }
+        td{
+            border: 2px solid #9AD2D2;
+            background-color: #D3F3F3;
+        }
+        th{
+            border: 2px solid #9D99D2;
+            background-color: #E2D4F3;
+        }
+    </style>
+    <title>Lista podręczników</title>
+</head>
+<body>
+    <h1>Lista podręczników</h1>
+
+    <table>
+        <tr>
+            <th>Tytuł książki</th>
+            <th>Sprzedający uczeń</th>
+            <th>Cena ucznia</th>
+            <th>Prowizja</th>
+            <th>Cena końcowa</th>
+            <th>Stan</th>
+            <th>Data dodania</th>
+        </tr>
+        <% data.forEach((book)=>{%>
+        <tr>
+            <td><%= book.title %></td>
+            <td><%= book.pupil %></td>
+            <td><%= book.pupil_price %></td>
+            <td><%= book.commision %></td>
+            <td><%= book.end_price %></td>
+            <td><%= book.status %></td>
+            <td><%= book.add_date %></td>
+        </tr>
+        <%});%>
+    </table>
+</body>
+</html>

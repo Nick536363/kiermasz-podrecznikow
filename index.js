@@ -2,10 +2,9 @@ const express = require("express")
 const session = require("express-session")
 const crypto = require("node:crypto")
 const { DatabaseSync } = require("node:sqlite")
-const database = new DatabaseSync(__dirname+"/db.db")
+const database = new DatabaseSync(__dirname+"/"+process.env.DB_NAME)
 
 const app = express()
-
 const PORT = process.env.PORT
 
 app.use(session({
@@ -15,12 +14,15 @@ app.use(session({
 }))
 
 app.use(express.urlencoded({ extended: true }))
+app.set('view engine', 'ejs');
 
 app.get("/", (req, res) => {
     if(!req.session.user){
         return res.redirect("/login")
     }
-    res.sendFile(__dirname+"/templates/tables.html")
+    const data = database.prepare("SELECT * FROM books").all()
+    console.log(data)
+    res.render(__dirname+"/templates/index.ejs", {data : data})
 })
 
 app.post("/", (req, res) => {
