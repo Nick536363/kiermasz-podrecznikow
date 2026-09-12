@@ -4,14 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
 
-        body {
-            background-color: #5A9586;
-        }
-        th{
-            border: 2px solid #9D99D2;
-            background-color: #E2D4F3;
-        }
+body {
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #263238;
+    background: linear-gradient(135deg, #5a9586, #7db8a8, #a8d8cb);
+}
+
+table {
+    width: 95%;
+    max-width: 1200px;
+    margin: 40px auto 25px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+/* Nagłówki */
+th {
+    padding: 16px 14px;
+    border: none;
+    background: #6f6aa8;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+th:first-child {
+    border-top-left-radius: 16px;
+}
+
+th:last-child {
+    border-top-right-radius: 16px;
+}
+
+/* Komórki */
+td {
+    padding: 12px;
+    border: none;
+    border-bottom: 1px solid #d8e9e5;
+    background: rgba(255, 255, 255, 0.85);
+}
+
+tr:nth-child(even) td {
+    background: #f3f9f7;
+}
+
+tr:hover td {
+    background: #e3f3ef;
+}
+
+/* Pola tekstowe */
+input {
+    width: 100%;
+    min-width: 130px;
+    padding: 10px 12px;
+    border: 2px solid #c9e4de;
+    border-radius: 8px;
+    outline: none;
+    background: #f8fcfb;
+    color: #263238;
+    font-family: inherit;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+input:focus {
+    border-color: #6f6aa8;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(111, 106, 168, 0.15);
+}
+
+/* Pole ceny */
+input[type="number"] {
+    min-width: 100px;
+}
+
+/* Select */
+select {
+    min-width: 150px;
+    padding: 10px 12px;
+    border: 2px solid #c9e4de;
+    border-radius: 8px;
+    outline: none;
+    background: #f8fcfb;
+    color: #263238;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+select:focus {
+    border-color: #6f6aa8;
+    box-shadow: 0 0 0 3px rgba(111, 106, 168, 0.15);
+}
+
+/* Formularz */
+form {
+    text-align: center;
+}
+
+/* Przycisk */
+button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    background: #6f6aa8;
+    color: white;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+    transition: 0.25s ease;
+}
+
+button:hover {
+    background: #59548f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Responsywność */
+@media (max-width: 900px) {
+    body {
+        padding: 20px 10px;
+    }
+
+    table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+}
+
     </style>
     <title>Lista podręczników</title>
 </head>
@@ -32,9 +180,9 @@
                 <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" ></td>
                 <td><input name="commision" type="number" value="<%= book.commision %>" ></td>
                 <td>
-                    <select name="status">
-                        <option value="Nie sprzedana">Nie sprzedana</option>
-                        <option value="Sprzedana">Sprzedana</option>
+                    <select value="<%= book.status %>" name="status">
+                        <option value="Nie sprzedana" <%= book.status === 'Nie sprzedana' ? 'selected' : '' %>>Nie sprzedana</option>
+                        <option value="Sprzedana" <%= book.status === 'Sprzedana' ? 'selected' : '' %>>Sprzedana</option>
                     </select>
                 </td>
             </tr>

@@ -5,31 +5,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
-            text-align: center;
-        }
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
 
-        body {
-            background-color: #5A9586;
-        }
-        td{
-            border: 2px solid #9AD2D2;
-            background-color: #D3F3F3;
-        }
-        th{
-            border: 2px solid #9D99D2;
-            background-color: #E2D4F3;
-        }
-        #info {
-            border:3px solid #E2D4F3;
-            background-color: #9AD2D2;
-            width: 50%;
-            margin-left: 25%;
-        }
+body {
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #263238;
+    background: linear-gradient(135deg, #5a9586, #7db8a8, #a8d8cb);
+}
+
+/* Nagłówek */
+h1 {
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Panel z informacjami */
+#info {
+    width: min(700px, 90%);
+    margin: 0 auto 30px;
+    padding: 25px 30px;
+    border: none;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+}
+
+#info h3 {
+    padding: 9px 0;
+    color: #345c54;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+#info h3:not(:last-child) {
+    border-bottom: 1px solid #c9e4de;
+}
+
+/* Przyciski */
+form {
+    display: inline-block;
+    margin: 0 6px 30px;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #496f67;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+    transition: 0.25s ease;
+}
+
+button:hover {
+    background: #365951;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Tabela */
+table {
+    width: 95%;
+    max-width: 1300px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Nagłówki tabeli */
+th {
+    padding: 16px 14px;
+    border: none;
+    background: #6f6aa8;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Zaokrąglenia górnych rogów */
+th:first-child {
+    border-top-left-radius: 15px;
+}
+
+th:last-child {
+    border-top-right-radius: 15px;
+}
+
+/* Komórki */
+td {
+    padding: 14px 12px;
+    border: none;
+    border-bottom: 1px solid #d8e9e5;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: #e6f5f1;
+    color: #294f47;
+}
+
+/* Co drugi wiersz */
+tr:nth-child(even) td {
+    background: #f3f9f7;
+}
+
+tr:nth-child(even):hover td {
+    background: #e1f2ed;
+}
+
+/* Responsywność */
+@media (max-width: 900px) {
+    body {
+        padding: 25px 10px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    #info {
+        width: 95%;
+    }
+
+    table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        padding: 12px 10px;
+    }
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 27px;
+    }
+
+    #info {
+        padding: 18px;
+    }
+
+    #info h3 {
+        font-size: 15px;
+    }
+
+    form {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    button {
+        width: 90%;
+    }
+
+    table {
+        margin-top: 20px;
+    }
+}
+
     </style>
     <title>Lista podręczników</title>
 </head>
 <body>
     <h1>Lista podręczników</h1>
+
+    <div id="info">
+        <h3>Liczba wszytkich książek: <%= sell_info.sum_books %></h3>
+        <h3>Liczba sprzedanych książek: <%= sell_info.sold %></h3>
+        <h3>Liczba niesprzedanych książek: <%= sell_info.non_sold %></h3>
+        <h3>Otrzymano pieniędzy: <%= sell_info.all_money %> zł</h3>
+        <h3>Całkowita prowizja: <%= sell_info.commision %> zł</h3>
+    </div>
+
+    <form method="get" action="/add">
+        <button type="submit">Dodaj podręcznik</button>
+    </form>
+    <form method="get" action="/change">
+        <button type="submit">Zmień podręcznik</button>
+    </form>
 
     <table>
         <tr>
@@ -53,19 +238,5 @@
         </tr>
         <%});%>
     </table>
-    <form method="get" action="/add">
-        <button type="submit">Dodaj podręcznik</button>
-    </form>
-    <form method="get" action="/change">
-        <button type="submit">Zmień podręcznik</button>
-    </form>
-
-    <div id="info">
-        <h3>Liczba wszytkich książek: <%= sell_info.sum_books %></h3>
-        <h3>Liczba sprzedanych książek: <%= sell_info.sold %></h3>
-        <h3>Liczba niesprzedanych książek: <%= sell_info.non_sold %></h3>
-        <h3>Otrzymano pieniędzy: <%= sell_info.money %> zł</h3>
-        <h3>Całkowita prowizja: <%= sell_info.commision %> zł</h3>
-    </div>
 </body>
 </html>

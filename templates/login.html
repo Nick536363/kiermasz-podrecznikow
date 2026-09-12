@@ -6,23 +6,100 @@
     <title>Log in</title>
 
     <style>
-        * {
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
     text-align: center;
 }
 
 body {
-    background-color: #5A9586;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #5a9586, #7db8a8, #a8d8cb);
 }
 
+/* Panel logowania */
 div {
-    margin-top: 15%;
-    margin-left: 40%;
-    border: 2px solid black;
+    width: 360px;
+    padding: 35px 40px;
+    border: none;
     border-radius: 20px;
-    background-color: #19AE46;
-    width: 20em;
-    height: 10em;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
 }
+
+/* Formularz */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    margin-bottom: 7px;
+    color: #345c54;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border: 2px solid #c9e4de;
+    border-radius: 10px;
+    outline: none;
+    background: #f5fbf9;
+    color: #263238;
+    font-size: 16px;
+    transition: 0.25s ease;
+}
+
+input:focus {
+    border-color: #6f6aa8;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(111, 106, 168, 0.15);
+}
+
+/* Przycisk */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #6f6aa8;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+    transition: 0.25s ease;
+}
+
+button:hover {
+    background: #59548f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Małe ekrany */
+@media (max-width: 450px) {
+    div {
+        width: 90%;
+        padding: 30px 25px;
+    }
+}
+
     </style>
 </head>
 <body>

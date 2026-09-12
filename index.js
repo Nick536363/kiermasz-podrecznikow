@@ -16,16 +16,26 @@ app.use(session({
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs');
 
+const all_books_prepare = database.prepare("SELECT COUNT(title) AS sum_books FROM books")
+const books_prepare = database.prepare("SELECT * FROM books")
+const non_sold_prepare = database.prepare("SELECT COUNT(title) AS not_sold FROM books WHERE status = 'Nie sprzedana'")
+const sold_prepare = database.prepare("SELECT COUNT(title) AS sold FROM books WHERE status = 'Sprzedana'")
+const all_money_prepare = database.prepare("SELECT SUM(end_price) AS money FROM books WHERE status = 'Sprzedana'")
+const commision_prepare = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE status = 'Sprzedana'")
+const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
+const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, end_price, status, add_date) VALUES (?, ?, ?, ?, ?, ?, ?)",)
+const update_books_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, end_price = ?, status = ? WHERE ID = ?")
+
 app.get("/", (req, res) => {
     if(!req.session.user){
         return res.redirect("/login")
     }
-    const books = database.prepare("SELECT * FROM books").all()
-    const all_books = database.prepare("SELECT COUNT(title) AS sum_books FROM books").get()
-    const non_sold = database.prepare("SELECT COUNT(title) AS not_sold FROM books WHERE status = 'Nie sprzedana'").get()
-    const sold = database.prepare("SELECT COUNT(title) AS sold FROM books WHERE status = 'Sprzedana'").get()
-    const all_money = database.prepare("SELECT SUM(end_price) AS money FROM books WHERE status = 'Sprzedana'").get()
-    const commision = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE status = 'Sprzedana'").get()
+    const books = books_prepare.all()
+    const all_books = all_books_prepare.get()
+    const non_sold = non_sold_prepare.get()
+    const sold = sold_prepare.get()
+    const all_money = all_money_prepare.get()
+    const commision = commision_prepare.get()
     let sell_info = {
         sum_books: all_books.sum_books,
         non_sold: non_sold.not_sold,
@@ -55,7 +65,7 @@ app.get("/change", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    const books = database.prepare("SELECT * FROM books").all()
+    const books = books_prepare.all()
     res.render(__dirname+"/templates/change.ejs", {
         books: books
     })
@@ -63,7 +73,7 @@ app.get("/change", (req, res)=>{
 
 app.post("/login", (req, res) => {
     const user = req.body.user
-    const data = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?").get(user)
+    const data = login_data_prepare.get(user)
     if(!data){
         res.redirect("/login")
         return
@@ -86,8 +96,7 @@ app.post("/add", (req, res)=>{
     let month = currentDate.getMonth()
     let year = currentDate.getFullYear()
     let stringDate = day+"-"+month+"-"+year
-    database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, end_price, status, add_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    ).run(req.body.title, req.body.pupil, req.body.pupil_price, req.body.commision, parseFloat(req.body.pupil_price)+parseFloat(req.body.commision), "Nie sprzedana", stringDate)
+    new_book_prepare.run(req.body.title, req.body.pupil, req.body.pupil_price, req.body.commision, parseFloat(req.body.pupil_price)+parseFloat(req.body.commision), "Nie sprzedana", stringDate)
     return res.redirect("/")
 })
 
@@ -95,9 +104,9 @@ app.post("/change", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    const all_books = database.prepare("SELECT COUNT(title) AS sum_books FROM books").get().sum_books
+    const all_books = all_books_prepare.get().sum_books
     for(let book_num = 1; book_num <= all_books; book_num++){
-        database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, end_price = ?, status = ? WHERE ID = ?").get(
+        update_books_preapre.get(
             req.body.title[book_num-1], req.body.pupil[book_num-1], parseFloat(req.body.pupil_price[book_num-1]), parseFloat(req.body.commision[book_num-1]), parseFloat(req.body.pupil_price[book_num-1])+parseFloat(req.body.commision[book_num-1]), req.body.status[book_num-1], book_num
         )
     }
