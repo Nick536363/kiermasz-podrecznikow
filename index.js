@@ -20,11 +20,11 @@ const all_books_prepare = database.prepare("SELECT COUNT(title) AS sum_books FRO
 const books_prepare = database.prepare("SELECT * FROM books")
 const non_sold_prepare = database.prepare("SELECT COUNT(title) AS not_sold FROM books WHERE status = 'Nie sprzedana'")
 const sold_prepare = database.prepare("SELECT COUNT(title) AS sold FROM books WHERE status = 'Sprzedana'")
-const all_money_prepare = database.prepare("SELECT SUM(end_price) AS money FROM books WHERE status = 'Sprzedana'")
+const all_money_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE status = 'Sprzedana'")
 const commision_prepare = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE status = 'Sprzedana'")
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
-const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, end_price, status, add_date) VALUES (?, ?, ?, ?, ?, ?, ?)",)
-const update_books_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, end_price = ?, status = ? WHERE ID = ?")
+const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date) VALUES (?, ?, ?, ?, ?, ?)",)
+const update_books_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, status = ? WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
 const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
 
@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
         sum_books: all_books.sum_books,
         non_sold: non_sold.not_sold,
         sold: sold.sold,
-        all_money: all_money.money,
+        all_money: all_money.money+commision.commision,
         commision: commision.commision
     }
     res.render(__dirname+"/templates/index.ejs", {
@@ -98,7 +98,7 @@ app.post("/add", (req, res)=>{
     let month = currentDate.getMonth()
     let year = currentDate.getFullYear()
     let stringDate = day+"-"+month+"-"+year
-    new_book_prepare.run(req.body.title, req.body.pupil, req.body.pupil_price, req.body.commision, parseFloat(req.body.pupil_price)+parseFloat(req.body.commision), "Nie sprzedana", stringDate)
+    new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)/10), "Nie sprzedana", stringDate)
     return res.redirect("/")
 })
 
@@ -110,7 +110,7 @@ app.post("/change", (req, res)=>{
         const all_books = all_books_prepare.get().sum_books
         for(let book_num = 1; book_num <= all_books; book_num++){
             update_books_preapre.get(
-                req.body.title[book_num-1], req.body.pupil[book_num-1], parseFloat(req.body.pupil_price[book_num-1]), parseFloat(req.body.commision[book_num-1]), parseFloat(req.body.pupil_price[book_num-1])+parseFloat(req.body.commision[book_num-1]), req.body.status[book_num-1], book_num
+                req.body.title[book_num-1], req.body.pupil[book_num-1], parseInt(req.body.pupil_price[book_num-1]), Math.floor(parseInt(req.body.pupil_price[book_num-1])/10), req.body.status[book_num-1], book_num
             )
         }
         return res.redirect("/")
