@@ -1,23 +1,33 @@
-//
-// server.ts
-//   Server entrypoint.
-//
-
-import Fastify from "fastify";
-import routes from "./app.js";
-
 /**
- * @type {FastifyInstance} Instance of Fastify
+ * !!ENTRYPOINT!!
+ *
+ * module name:
+ *  + app.ts
+ *
+ * description:
+ *  + Server's entrypoint.
  */
-const fastify = Fastify({
-	logger: true,
+
+import { createServer } from './app.js';
+import { disconnectPrisma } from './db/client.js';
+
+const fastify = await createServer({
+    logger: true,
 });
 
-fastify.register(routes);
+// CTRL + C
+process.on('SIGTERM', async () => {
+    await disconnectPrisma();
+    await fastify.close();
 
-fastify.listen({ port: 3000 }, function (err, address) {
-	if (err) {
-		fastify.log.error(err);
-		process.exit(1);
-	}
+    process.exit(0);
+});
+
+// START SERVER
+fastify.listen({ port: 3000 }, (err) => {
+    if (err) {
+        fastify.log.error(err);
+
+        process.exit(1);
+    }
 });

@@ -1,0 +1,75 @@
+module.exports = {
+    root: true,
+    env: {
+        node: true,
+        es2022: true,
+    },
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+    },
+    plugins: ['@typescript-eslint'],
+    extends: [
+        'airbnb-base',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:prettier/recommended',
+    ],
+    settings: {
+        'import/resolver': {
+            typescript: {
+                alwaysTryTypes: true,
+            },
+        },
+    },
+    rules: {
+        'max-len': ['error', { code: 100, ignoreUrls: true }],
+
+        'import/extensions': [
+            'error',
+            'ignorePackages',
+            {
+                ts: 'never',
+            },
+        ],
+        'import/no-unresolved': 'off',
+        'import/prefer-default-export': 'off',
+
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': [
+            'error',
+            {
+                argsIgnorePattern: '^_',
+            },
+        ],
+
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': 'error',
+
+        'no-use-before-define': 'off',
+        '@typescript-eslint/no-use-before-define': [
+            'error',
+            {
+                functions: false,
+            },
+        ],
+
+        'class-methods-use-this': 'off',
+        'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+        'no-await-in-loop': 'error',
+        'no-loop-func': 'error',
+        'no-restricted-syntax': [
+            'error',
+            {
+                selector: 'ForInStatement',
+                message:
+                    'for..in jest wolniejsze i iteruje po prototypie — użyj Object.keys/entries.',
+            },
+        ],
+        'prefer-const': 'error',
+        'no-param-reassign': ['error', { props: true }],
+    },
+};

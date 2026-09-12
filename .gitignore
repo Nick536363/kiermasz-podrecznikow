@@ -28,9 +28,10 @@ yarn-error.log*
 coverage/
 .nyc_output/
 
-# Drizzle
-drizzle/meta/
-*.sqlite
+# Prisma
+migrations/
+backend/src/db/generated/
+backend/src/db/zod-generated/
 
 # Editor / OS
 .vscode/*
