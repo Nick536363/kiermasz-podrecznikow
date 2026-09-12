@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        body {
+            background-color: #5A9586;
+        }
+        th{
+            border: 2px solid #9D99D2;
+            background-color: #E2D4F3;
+        }
+    </style>
+    <title>Lista podręczników</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Tytuł książki</th>
+            <th>Sprzedający uczeń</th>
+            <th>Cena ucznia</th>
+            <th>Prowizja</th>
+            <th>Stan</th>
+        </tr>
+        <form method="post" action="/change">
+            <% books.forEach((book)=>{%>
+            <tr>
+                <td><input name="title" type="text" value="<%= book.title %>" ></td>
+                <td><input name="pupil" type="text" value="<%= book.pupil %>"" ></td>
+                <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" ></td>
+                <td><input name="commision" type="number" value="<%= book.commision %>" ></td>
+                <td>
+                    <select name="status">
+                        <option value="Nie sprzedana">Nie sprzedana</option>
+                        <option value="Sprzedana">Sprzedana</option>
+                    </select>
+                </td>
+            </tr>
+            <%});%>
+
+            <button type="submit">Zapisz</button>
+        </form>
+    </table>
+    
+</body>
+</html>

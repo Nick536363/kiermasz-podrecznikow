@@ -33,7 +33,6 @@ app.get("/", (req, res) => {
         all_money: all_money.money,
         commision: commision.commision
     }
-    console.log(sell_info)
     res.render(__dirname+"/templates/index.ejs", {
         books : books,
         sell_info : sell_info
@@ -50,6 +49,16 @@ app.get("/add", (req, res)=>{
         return res.redirect("/login")
     }
     res.sendFile(__dirname+"/templates/add.html")
+})
+
+app.get("/change", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    const books = database.prepare("SELECT * FROM books").all()
+    res.render(__dirname+"/templates/change.ejs", {
+        books: books
+    })
 })
 
 app.post("/login", (req, res) => {
@@ -79,6 +88,19 @@ app.post("/add", (req, res)=>{
     let stringDate = day+"-"+month+"-"+year
     database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, end_price, status, add_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
     ).run(req.body.title, req.body.pupil, req.body.pupil_price, req.body.commision, parseFloat(req.body.pupil_price)+parseFloat(req.body.commision), "Nie sprzedana", stringDate)
+    return res.redirect("/")
+})
+
+app.post("/change", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    const all_books = database.prepare("SELECT COUNT(title) AS sum_books FROM books").get().sum_books
+    for(let book_num = 1; book_num <= all_books; book_num++){
+        database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, end_price = ?, status = ? WHERE ID = ?").get(
+            req.body.title[book_num-1], req.body.pupil[book_num-1], parseFloat(req.body.pupil_price[book_num-1]), parseFloat(req.body.commision[book_num-1]), parseFloat(req.body.pupil_price[book_num-1])+parseFloat(req.body.commision[book_num-1]), req.body.status[book_num-1], book_num
+        )
+    }
     return res.redirect("/")
 })
 

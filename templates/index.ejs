@@ -24,7 +24,6 @@
             background-color: #9AD2D2;
             width: 50%;
             margin-left: 25%;
-            
         }
     </style>
     <title>Lista podręczników</title>
@@ -41,7 +40,6 @@
             <th>Cena końcowa</th>
             <th>Stan</th>
             <th>Data dodania</th>
-            <th>Komentarz</th>
         </tr>
         <% books.forEach((book)=>{%>
         <tr>
@@ -52,12 +50,14 @@
             <td><%= book.end_price %></td>
             <td><%= book.status %></td>
             <td><%= book.add_date %></td>
-            <td><%= book.comment %></td>
         </tr>
         <%});%>
     </table>
     <form method="get" action="/add">
         <button type="submit">Dodaj podręcznik</button>
+    </form>
+    <form method="get" action="/change">
+        <button type="submit">Zmień podręcznik</button>
     </form>
 
     <div id="info">
