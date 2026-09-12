@@ -25,6 +25,8 @@ const commision_prepare = database.prepare("SELECT SUM(commision) AS commision F
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
 const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, end_price, status, add_date) VALUES (?, ?, ?, ?, ?, ?, ?)",)
 const update_books_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, end_price = ?, status = ? WHERE ID = ?")
+const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
+const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
 
 app.get("/", (req, res) => {
     if(!req.session.user){
@@ -104,13 +106,30 @@ app.post("/change", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    const all_books = all_books_prepare.get().sum_books
-    for(let book_num = 1; book_num <= all_books; book_num++){
-        update_books_preapre.get(
-            req.body.title[book_num-1], req.body.pupil[book_num-1], parseFloat(req.body.pupil_price[book_num-1]), parseFloat(req.body.commision[book_num-1]), parseFloat(req.body.pupil_price[book_num-1])+parseFloat(req.body.commision[book_num-1]), req.body.status[book_num-1], book_num
-        )
+    if(!req.body.searchOn){
+        const all_books = all_books_prepare.get().sum_books
+        for(let book_num = 1; book_num <= all_books; book_num++){
+            update_books_preapre.get(
+                req.body.title[book_num-1], req.body.pupil[book_num-1], parseFloat(req.body.pupil_price[book_num-1]), parseFloat(req.body.commision[book_num-1]), parseFloat(req.body.pupil_price[book_num-1])+parseFloat(req.body.commision[book_num-1]), req.body.status[book_num-1], book_num
+            )
+        }
+        return res.redirect("/")
     }
-    return res.redirect("/")
+    else{
+        if(!req.body.searchfield.trim()){
+            return res.redirect("/change")
+        }
+        let books = {}
+        if(req.body.searchOn == "book"){
+            books = search_on_book_prepare.all(`%${req.body.searchfield}%`)
+        }
+        else if(req.body.searchOn == "pupil"){
+            books = search_on_pupil_prepare.all(`%${req.body.searchfield}%`)
+        }
+        res.render(__dirname+"/templates/change.ejs", {
+            books: books
+        })
+    }
 })
 
 app.listen(PORT, () => {

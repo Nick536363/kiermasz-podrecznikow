@@ -161,9 +161,19 @@ button:active {
 }
 
     </style>
-    <title>Lista podręczników</title>
+    <title>Zmiana recordów</title>
 </head>
 <body>
+
+    <form method="post" action="/change">
+        <input type="text" name="searchfield">
+        <button type="submit">Wyszukaj</button>
+        <select name="searchOn">
+            <option value="pupil">Uczeń</option>
+            <option value="book">Książka</option>
+        </select>
+    </form>
+
     <table>
         <tr>
             <th>Tytuł książki</th>
@@ -175,10 +185,10 @@ button:active {
         <form method="post" action="/change">
             <% books.forEach((book)=>{%>
             <tr>
-                <td><input name="title" type="text" value="<%= book.title %>" ></td>
-                <td><input name="pupil" type="text" value="<%= book.pupil %>"" ></td>
-                <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" ></td>
-                <td><input name="commision" type="number" value="<%= book.commision %>" ></td>
+                <td><input name="title" type="text" value="<%= book.title %>" required></td>
+                <td><input name="pupil" type="text" value="<%= book.pupil %>"" required></td>
+                <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" required></td>
+                <td><input name="commision" type="number" value="<%= book.commision %>" required></td>
                 <td>
                     <select value="<%= book.status %>" name="status">
                         <option value="Nie sprzedana" <%= book.status === 'Nie sprzedana' ? 'selected' : '' %>>Nie sprzedana</option>
