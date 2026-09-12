@@ -201,6 +201,15 @@ tr:nth-child(even):hover td {
 <body>
     <h1>Lista podręczników</h1>
 
+    <form method="post" action="/">
+        <input type="text" name="searchfield">
+        <button type="submit">Wyszukaj</button>
+        <select name="searchOn">
+            <option value="pupil">Uczeń</option>
+            <option value="book">Książka</option>
+        </select>
+    </form>
+
     <div id="info">
         <h3>Liczba wszytkich książek: <%= sell_info.sum_books %></h3>
         <h3>Liczba sprzedanych książek: <%= sell_info.sold %></h3>
@@ -216,11 +225,8 @@ tr:nth-child(even):hover td {
         <h3>Prowizji BLIKiem: <%= sell_info.commision_blik %> zł</h3>
     </div>
 
-    <form method="get" action="/add">
+    <form method="get" action="/book/add">
         <button type="submit">Dodaj podręcznik</button>
-    </form>
-    <form method="get" action="/change">
-        <button type="submit">Zmień podręcznik</button>
     </form>
 
     <table>
@@ -232,6 +238,7 @@ tr:nth-child(even):hover td {
             <th>Stan</th>
             <th>Metoda płatności</th>
             <th>Data dodania</th>
+            <th>Akcje</th>
         </tr>
         <% books.forEach((book)=>{%>
         <tr>
@@ -242,6 +249,11 @@ tr:nth-child(even):hover td {
             <td><%= book.status %></td>
             <td><%= book.payment_method %></td>
             <td><%= book.add_date %></td>
+            <td>
+                <form method="post" action="/book/change">
+                    <button type="submit" name="id" value="<%= book.ID %>">Edytuj</button>
+                </form>
+            </td>
         </tr>
         <%});%>
     </table>

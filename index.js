@@ -13,6 +13,7 @@ app.use(session({
     resave: false
 }))
 
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs');
 
@@ -24,10 +25,11 @@ const all_money_prepare = database.prepare("SELECT SUM(pupil_price) AS money FRO
 const commision_prepare = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE status = 'Sprzedana'")
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
 const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date) VALUES (?, ?, ?, ?, ?, ?)",)
-const update_books_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, status = ?, payment_method = ? WHERE ID = ?")
+const update_book_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, status = ?, payment_method = ? WHERE ID = ?")
+const book_by_id_prepare = database.prepare("SELECT * FROM books WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
 const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
-const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=?")
+const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 
 app.get("/", (req, res) => {
     if(!req.session.user){
@@ -65,7 +67,7 @@ app.get("/login", (req, res) => {
     res.sendFile(__dirname+"/templates/login.html")
 })
 
-app.get("/add", (req, res)=>{
+app.get("/book/add", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
@@ -98,7 +100,7 @@ app.post("/login", (req, res) => {
     return res.redirect("/login")
 })
 
-app.post("/add", (req, res)=>{
+app.post("/book/add", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
@@ -111,33 +113,65 @@ app.post("/add", (req, res)=>{
     return res.redirect("/")
 })
 
-app.post("/change", (req, res)=>{
+
+app.post("/", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    if(!req.body.searchOn){
-        const all_books = all_books_prepare.get().sum_books
-        for(let book_num = 1; book_num <= all_books; book_num++){
-            update_books_preapre.get(
-                req.body.title[book_num-1], req.body.pupil[book_num-1], parseInt(req.body.pupil_price[book_num-1]), Math.floor(parseInt(req.body.pupil_price[book_num-1])/10), req.body.status[book_num-1], req.body.payment_method[book_num-1], book_num
-            )
-        }
+    if(!req.body.searchfield.trim()){
         return res.redirect("/")
     }
-    else{
-        if(!req.body.searchfield.trim()){
-            return res.redirect("/change")
-        }
-        let books = {}
-        if(req.body.searchOn == "book"){
-            books = search_on_book_prepare.all(`%${req.body.searchfield}%`)
-        }
-        else if(req.body.searchOn == "pupil"){
-            books = search_on_pupil_prepare.all(`%${req.body.searchfield}%`)
-        }
+
+    let books = {}
+
+    const all_books = all_books_prepare.get()
+    const non_sold = non_sold_prepare.get()
+    const sold = sold_prepare.get()
+    const all_money = all_money_prepare.get()
+    const commision = commision_prepare.get()
+    const all_cash = all_payments_prepare.get("Gotówka")
+    const all_blik = all_payments_prepare.get("BLIK")
+    const commision_cash = Math.floor(all_cash.money/10)
+    const commision_blik = Math.floor(all_blik.money/10)
+    let sell_info = {
+        sum_books: all_books.sum_books,
+        non_sold: non_sold.not_sold,
+        sold: sold.sold,
+        all_money: all_money.money+commision.commision,
+        commision: commision.commision,
+        all_cash:all_cash.money+commision_cash,
+        commision_cash: commision_cash,
+        all_blik: all_blik.money+commision_blik,
+        commision_blik: commision_blik
+    }
+
+    if(req.body.searchOn == "pupil"){
+        books = search_on_pupil_prepare.all(`%${req.body.searchfield}%`)
+    }
+    else if(req.body.searchOn == "book"){
+        books = search_on_book_prepare.all(`%${req.body.searchfield}%`)
+    }
+
+
+    res.render(__dirname+"/templates/index.ejs", {
+        books: books,
+        sell_info: sell_info
+    })
+
+})
+
+app.post("/book/change", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    if(req.body.id){
         res.render(__dirname+"/templates/change.ejs", {
-            books: books
+            book: book_by_id_prepare.get(req.body.id)
         })
+    }
+    else if(req.body.ID){
+        update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)/10), req.body.status, req.body.payment_method, parseInt(req.body.ID))
+        return res.redirect("/")
     }
 })
 

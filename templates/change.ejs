@@ -164,16 +164,7 @@ button:active {
     <title>Zmiana recordów</title>
 </head>
 <body>
-
-    <form method="post" action="/change">
-        <input type="text" name="searchfield">
-        <button type="submit">Wyszukaj</button>
-        <select name="searchOn">
-            <option value="pupil">Uczeń</option>
-            <option value="book">Książka</option>
-        </select>
-    </form>
-
+    
     <table>
         <tr>
             <th>Tytuł książki</th>
@@ -182,9 +173,8 @@ button:active {
             <th>Stan</th>
             <th>Metoda płatności</th>
         </tr>
-        <form method="post" action="/change">
-            <% books.forEach((book)=>{%>
-            <tr>
+        <tr>
+            <form method="post" action="/book/change">
                 <td><input name="title" type="text" value="<%= book.title %>" required></td>
                 <td><input name="pupil" type="text" value="<%= book.pupil %>"" required></td>
                 <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" required></td>
@@ -200,13 +190,11 @@ button:active {
                         <option value="Gotówka" <%= book.payment_method === 'Gotówka' ? 'selected' : '' %>>Gotówka</option>
                         <option value="BLIK" <%= book.payment_method === 'BLIK' ? 'selected' : '' %>>BLIK</option>
                     </select>
-                </td>
-            </tr>
-            <%});%>
 
-            <button type="submit">Zapisz</button>
-        </form>
+                <button type="submit" name="ID" value=<%= book.ID %>>Zapisz</button>
+            </form>
+        </tr>
     </table>
-    
+
 </body>
 </html>
