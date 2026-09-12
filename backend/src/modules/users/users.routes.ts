@@ -59,6 +59,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance
         },
         async (request, reply) => {
             const user = await usersService.createUser(request.body);
+
             reply.code(201);
             return user;
         },
@@ -73,6 +74,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance
         },
         async (request) => {
             const { page, limit } = request.query;
+
             return usersService.listUsers(page, limit);
         },
     );
@@ -113,6 +115,7 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance
         },
         async (request, reply) => {
             await usersService.deleteUser(request.params.id);
+
             reply.code(204);
         },
     );

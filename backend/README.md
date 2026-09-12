@@ -1,6 +1,25 @@
-# LISTING CRUD BACKEND
+# LISTING-MANAGER-API 1.0.0
 
-This is the backend of listing-manager app. It exposes API routes to the frontend part of this app. Backend uses `Fastify` as a web framework (server) and `Prisma ORM` as a ORM (database).
+This is the backend of listing-manager app. It exposes API routes to the frontend part of this app. Backend uses `Fastify` as a web framework (server), `Prisma ORM` as a ORM (database connection) and `PostgresDB` as a database.
+
+## Routes
+
+```
+└── / (GET, HEAD)
+    ├── health (GET, HEAD)   ---------------------- ->  API HEALTH
+    ├── ready (GET, HEAD)    ---------------------- ->  API STATUS
+    ├── _debug/routes (GET, HEAD)    -------- DEBUG ->  PRINTS ROUTES
+    └── api/v1/     ------------------------------- ->  API ROUTE
+        ├── auth/
+        │   ├── log
+        │   │   ├── in (POST)   ------------------- ->  USER LOGIN
+        │   │   └── out (POST)   ------------------ ->  USER LOGOUT
+        │   └── refresh (POST)   ------------------ ->  REFRESH TOKEN
+        └── users (POST, GET, HEAD)
+            └── / (POST, GET, HEAD)
+                ├── me (GET, HEAD, PATCH)   ------- ->  ME UPDATES/INFO
+                └── :id (GET, HEAD, PATCH, DELETE)  ->  USER CRUD (:id)
+```
 
 ## API Version and information
 
@@ -15,21 +34,3 @@ Response should look something like this:
     "version": "1.0.0"
 }
 ```
-
-## Routes
-
-Routes without prefix
-
-| Route                  | Description     |
-| ---------------------- | --------------- |
-| `/`                    | API information |
-| `/api/v<API VERSION>/` | Prefix route    |
-
----
-
-Routes with prefix: `/api/v<API VERSION>/`
-
-| Route     | Description                     |
-| --------- | ------------------------------- |
-| `/users/` | Prefix route to `users` service |
-| `/auth/`  | Authentication route prefix     |

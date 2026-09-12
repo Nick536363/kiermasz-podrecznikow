@@ -9,6 +9,7 @@
 import argon2 from 'argon2';
 import type { z } from 'zod';
 
+import { omitUndefined } from '@/lib/omit-undefined.js';
 import { prisma } from '@/db/client.js';
 import type { Prisma } from '@/db/generated/client.js';
 import { CreateUserSchema, UpdateUserSchema } from './users.schemas.js';
@@ -40,6 +41,7 @@ export async function listUsers(page: number, limit: number) {
         }),
         prisma.user.count(),
     ]);
+
     return { users, total, page, limit };
 }
 
@@ -48,13 +50,12 @@ export async function getUser(id: number) {
 }
 
 export async function updateUser(id: number, input: z.infer<typeof UpdateUserSchema>) {
-    const data: Prisma.UserUpdateInput = {};
+    const { password, ...other } = input;
 
-    if (input.name !== undefined) {
-        data.name = input.name;
-    }
-    if (input.password !== undefined) {
-        data.passwordHash = await argon2.hash(input.password, {
+    const data = omitUndefined(other) as Prisma.UserUpdateInput;
+
+    if (password !== undefined) {
+        data.passwordHash = await argon2.hash(password, {
             type: argon2.argon2id,
         });
     }

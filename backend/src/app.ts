@@ -21,6 +21,7 @@ import requireRole from './plugins/require-role.js';
 import { statisticRoutes } from './modules/statistics/statistics.routes.js';
 import { userRoutes } from './modules/users/users.routes.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
+import { listingRoutes } from './modules/listings/listings.routes.js';
 
 /**
  * @description Encapsulates API routes
@@ -29,6 +30,7 @@ import { authRoutes } from './modules/auth/auth.routes.js';
 const registerAPI: FastifyPluginAsyncZod = async (fastify: FastifyInstance) => {
     await fastify.register(authRoutes, { prefix: '/auth' });
     await fastify.register(userRoutes, { prefix: '/users' });
+    await fastify.register(listingRoutes, { prefix: '/listings' });
 };
 
 /**

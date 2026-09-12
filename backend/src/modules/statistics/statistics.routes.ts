@@ -8,18 +8,34 @@
 
 import type { FastifyInstance } from 'fastify';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
+import { apiReady, apiVersion, isApiHealthy } from './statistics.services.js';
 
 /**
  * @description Encapsulates statistic routes
  * @param {FastifyInstance} fastify Encapsulated Fastify Instance
  */
 export const statisticRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance) => {
-    // API NAME + VERSION
-    fastify.get('/', async () => {
-        return {
-            name: 'listing-manager-api',
-            status: 'ok',
-            version: process.env.npm_package_version ?? '1.0.0',
-        };
+    // API VERSION
+    fastify.get('/', async () => apiVersion());
+
+    // API HEALTH
+    fastify.get('/health', async (_, reply) => {
+        if (!isApiHealthy()) {
+            reply.code(500);
+            return { status: 'error', db: 'disconnected' };
+        }
+
+        return { status: 'ok', db: 'connected' };
     });
+
+    // API READY
+    fastify.get('/ready', async () => apiReady());
+
+    //
+    // DEBUG!
+    //
+
+    if (process.env.NODE_ENV !== 'production') {
+        fastify.get('/_debug/routes', async () => fastify.printRoutes());
+    }
 };
