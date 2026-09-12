@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodaj książkę</title>
+    <style>
+        * {
+            text-align: center;
+        }
+
+        body {
+            background-color: #5A9586;
+        }
+        body>div {
+            margin-top: 15%;
+            margin-left: 40%;
+            border: 2px solid black;
+            border-radius: 20px;
+            background-color: #19AE46;
+            width: 20em;
+            height: 10em;
+        }
+    
+    </style>
+</head>
+<body>
+    <div>
+    <form method="post" action="/add">
+        <div>
+            <label for="title">Tytuł</label>
+            <input type="text" name="title" required>
+        </div>
+        <div>
+            <label for="pupil">Uczeń</label>
+            <input type="text" name="pupil" required>
+        </div>
+        <div>
+            <label for="pupil_price">Cena ucznia</label>
+            <input type="number" name="pupil_price" min="10" max="50" required>
+        </div>
+        <div>
+            <label for="commision">Prowizja</label>
+            <input type="number" name="commision" min="1" max="5" required>
+        </div>
+        <div>
+            <label for="comment">Komentarz</label>
+            <input type="text" name="comment" required>
+        </div>
+        
+        <button type="submit">Dodaj</button>
+    </form>
+    </div>
+    
+</body>
+</html>

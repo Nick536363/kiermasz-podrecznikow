@@ -20,12 +20,24 @@ app.get("/", (req, res) => {
     if(!req.session.user){
         return res.redirect("/login")
     }
+    console.log(req.session.user)
     const data = database.prepare("SELECT * FROM books").all()
-    console.log(data)
     res.render(__dirname+"/templates/index.ejs", {data : data})
 })
 
-app.post("/", (req, res) => {
+
+app.get("/login", (req, res) => {
+    res.sendFile(__dirname+"/templates/login.html")
+})
+
+app.get("/add", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    res.sendFile(__dirname+"/templates/add.html")
+})
+
+app.post("/login", (req, res) => {
     const user = req.body.user
     const data = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?").get(user)
     if(!data){
@@ -35,14 +47,10 @@ app.post("/", (req, res) => {
     const salt = data.salt
     const hashed_passwd = crypto.scryptSync(req.body.passwd, salt, 64).toString("hex")
     if(hashed_passwd == data.password){
-        req.session.user = data.uID
+        req.session.user = crypto.scryptSync(data.uID.toString(), salt, 64).toString("hex")
         return res.redirect("/")
     }
     return res.redirect("/login")
-})
-
-app.get("/login", (req, res) => {
-    res.sendFile(__dirname+"/templates/login.html")
 })
 
 app.listen(PORT, () => {
