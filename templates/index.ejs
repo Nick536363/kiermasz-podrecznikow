@@ -19,6 +19,13 @@
             border: 2px solid #9D99D2;
             background-color: #E2D4F3;
         }
+        #info {
+            border:3px solid #E2D4F3;
+            background-color: #9AD2D2;
+            width: 50%;
+            margin-left: 25%;
+            
+        }
     </style>
     <title>Lista podręczników</title>
 </head>
@@ -34,8 +41,9 @@
             <th>Cena końcowa</th>
             <th>Stan</th>
             <th>Data dodania</th>
+            <th>Komentarz</th>
         </tr>
-        <% data.forEach((book)=>{%>
+        <% books.forEach((book)=>{%>
         <tr>
             <td><%= book.title %></td>
             <td><%= book.pupil %></td>
@@ -44,8 +52,20 @@
             <td><%= book.end_price %></td>
             <td><%= book.status %></td>
             <td><%= book.add_date %></td>
+            <td><%= book.comment %></td>
         </tr>
         <%});%>
     </table>
+    <form method="get" action="/add">
+        <button type="submit">Dodaj podręcznik</button>
+    </form>
+
+    <div id="info">
+        <h3>Liczba wszytkich książek: <%= sell_info.sum_books %></h3>
+        <h3>Liczba sprzedanych książek: <%= sell_info.sold %></h3>
+        <h3>Liczba niesprzedanych książek: <%= sell_info.non_sold %></h3>
+        <h3>Otrzymano pieniędzy: <%= sell_info.money %> zł</h3>
+        <h3>Całkowita prowizja: <%= sell_info.commision %> zł</h3>
+    </div>
 </body>
 </html>

@@ -29,11 +29,11 @@
     <form method="post" action="/add">
         <div>
             <label for="title">Tytuł</label>
-            <input type="text" name="title" required>
+            <input type="text" name="title" minlength="15" required>
         </div>
         <div>
             <label for="pupil">Uczeń</label>
-            <input type="text" name="pupil" required>
+            <input type="text" name="pupil" minlength="15" required>
         </div>
         <div>
             <label for="pupil_price">Cena ucznia</label>
@@ -45,7 +45,7 @@
         </div>
         <div>
             <label for="comment">Komentarz</label>
-            <input type="text" name="comment" required>
+            <input type="text" name="comment">
         </div>
         
         <button type="submit">Dodaj</button>
