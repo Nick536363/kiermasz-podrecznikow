@@ -205,8 +205,15 @@ tr:nth-child(even):hover td {
         <h3>Liczba wszytkich książek: <%= sell_info.sum_books %></h3>
         <h3>Liczba sprzedanych książek: <%= sell_info.sold %></h3>
         <h3>Liczba niesprzedanych książek: <%= sell_info.non_sold %></h3>
+        <hr>
         <h3>Otrzymano pieniędzy: <%= sell_info.all_money %> zł</h3>
         <h3>Całkowita prowizja: <%= sell_info.commision %> zł</h3>
+        <hr>
+        <h3>Otrzymano gotówka: <%= sell_info.all_cash %> zł</h3>
+        <h3>Prowizji w gotówce: <%= sell_info.commision_cash %> zł</h3>
+        <hr>
+        <h3>Otrzymano BLIKiem: <%= sell_info.all_blik %> zł</h3>
+        <h3>Prowizji BLIKiem: <%= sell_info.commision_blik %> zł</h3>
     </div>
 
     <form method="get" action="/add">
@@ -223,6 +230,7 @@ tr:nth-child(even):hover td {
             <th>Cena ucznia</th>
             <th>Prowizja</th>
             <th>Stan</th>
+            <th>Metoda płatności</th>
             <th>Data dodania</th>
         </tr>
         <% books.forEach((book)=>{%>
@@ -232,6 +240,7 @@ tr:nth-child(even):hover td {
             <td><%= book.pupil_price %></td>
             <td><%= book.commision %></td>
             <td><%= book.status %></td>
+            <td><%= book.payment_method %></td>
             <td><%= book.add_date %></td>
         </tr>
         <%});%>

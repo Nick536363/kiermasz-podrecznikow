@@ -179,8 +179,8 @@ button:active {
             <th>Tytuł książki</th>
             <th>Sprzedający uczeń</th>
             <th>Cena ucznia</th>
-            <th>Prowizja</th>
             <th>Stan</th>
+            <th>Metoda płatności</th>
         </tr>
         <form method="post" action="/change">
             <% books.forEach((book)=>{%>
@@ -192,6 +192,13 @@ button:active {
                     <select value="<%= book.status %>" name="status">
                         <option value="Nie sprzedana" <%= book.status === 'Nie sprzedana' ? 'selected' : '' %>>Nie sprzedana</option>
                         <option value="Sprzedana" <%= book.status === 'Sprzedana' ? 'selected' : '' %>>Sprzedana</option>
+                    </select>
+                </td>
+                <td>
+                    <select value="<%= book.payment_method %>" name="payment_method">
+                        <option value="-" <%= book.payment_method === '-' ? 'selected' : '' %>>-</option>
+                        <option value="Gotówka" <%= book.payment_method === 'Gotówka' ? 'selected' : '' %>>Gotówka</option>
+                        <option value="BLIK" <%= book.payment_method === 'BLIK' ? 'selected' : '' %>>BLIK</option>
                     </select>
                 </td>
             </tr>
