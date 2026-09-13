@@ -141,7 +141,7 @@ app.post("/book/add", (req, res)=>{
         res.redirect("/")
     }
     new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), "Nie sprzedana", date)
-    log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} dodał nową książkę`)
+    log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} dodał nową książkę:{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\n}`)
     return res.redirect("/")
 })
 
@@ -199,18 +199,26 @@ app.post("/", (req, res)=>{
 
 })
 
+app.get("/book/change/", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    if(req.query.id){
+        res.render(__dirname+"/templates/change.ejs", {
+            book: book_by_id_prepare.get(req.query.id)
+        })
+    }
+})
+
 app.post("/book/change", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    if(req.body.id){
-        res.render(__dirname+"/templates/change.ejs", {
-            book: book_by_id_prepare.get(req.body.id)
-        })
-    }
     else if(req.body.ID){
+        let book = book_by_id_prepare.get(parseInt(req.body.ID))
+        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę z:{\ntitle: ${book.title}\npupil: ${book.pupil}\npupil_price: ${book.pupil_price}\nstatus: ${book.status}\npayment_method: ${book.payment_method}\n}`)
         update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), req.body.status, req.body.payment_method, parseInt(req.body.ID))
-        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę ${req.body.ID}`)
+        log("log.log", `na :{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\nstatus: ${req.body.status}\npayment_method: ${req.body.payment_method}\n}`)
         return res.redirect("/")
     }
 })

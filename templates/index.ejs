@@ -517,7 +517,7 @@ select:focus-visible {
             <td><%= book.payment_method %></td>
             <td><%= book.add_date %></td>
             <td>
-                <form method="post" action="/book/change">
+                <form method="get" action="/book/change">
                     <button type="submit" name="id" value="<%= book.ID %>">Edytuj</button>
                 </form>
             </td>
