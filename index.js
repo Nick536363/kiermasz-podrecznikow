@@ -190,7 +190,7 @@ app.post("/", (req, res)=>{
         books = books_by_payment_prepare.all(`%${req.body.searchfield}%`)
     }
 
-    log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} wyszukał ${req.body.searchfield} z kategorii ${req.body.searchOn}`)
+    log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} wyszukał "${req.body.searchfield}" z kategorii ${req.body.searchOn}`)
 
     res.render(__dirname+"/templates/index.ejs", {
         books: books,
@@ -216,7 +216,7 @@ app.post("/book/change", (req, res)=>{
     }
     else if(req.body.ID){
         let book = book_by_id_prepare.get(parseInt(req.body.ID))
-        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę z:{\ntitle: ${book.title}\npupil: ${book.pupil}\npupil_price: ${book.pupil_price}\nstatus: ${book.status}\npayment_method: ${book.payment_method}\n}`)
+        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę ${req.body.ID} z:{\ntitle: ${book.title}\npupil: ${book.pupil}\npupil_price: ${book.pupil_price}\nstatus: ${book.status}\npayment_method: ${book.payment_method}\n}`)
         update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), req.body.status, req.body.payment_method, parseInt(req.body.ID))
         log("log.log", `na :{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\nstatus: ${req.body.status}\npayment_method: ${req.body.payment_method}\n}`)
         return res.redirect("/")
