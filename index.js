@@ -36,7 +36,7 @@ const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title
 const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const all_paymements_commision_preapre = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
-const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ? WHERE ID = ?")
+const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ? WHERE ID = ? AND status = 'Nie sprzedana'")
 
 
 app.get("/", (req, res) => {
@@ -194,12 +194,26 @@ app.post("/book/sell", (req, res)=>{
         return res.redirect("/login")
     }
     if(req.body.idC){
-        sell_book_prepare.run("Gotówka", req.body.idC)
+        if(sell_book_prepare.run("Gotówka", req.body.idC).changes != 1){
+            return res.redirect("/book/sell/error")
+        }
     }
     else if(req.body.idB){
-        sell_book_prepare.run("BLIK", req.body.idB)
+        if(sell_book_prepare.run("BLIK", req.body.idB).changes != 1){
+            return res.redirect("/book/sell/error")
+        }
     }
     return res.redirect("/")
+})
+
+app.get("/book/sell/error", (req, res)=>{
+    if(!req.session.user){
+        res.redirect("/login")
+    }
+    res.render(__dirname+"/templates/error", {
+        title: "BŁĄD SPRZEDAŻY",
+        error: "Upewnij się, że podałeś poprawny numer książki oraz że książka nie została już sprzedana. Jeżeli ten błąd się powtarza, skontaktuj się niezwłocznie z działem programistów."
+    })
 })
 
 app.listen(PORT, () => {
