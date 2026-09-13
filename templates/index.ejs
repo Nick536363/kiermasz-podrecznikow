@@ -19,9 +19,12 @@ body {
     background: linear-gradient(135deg, #5a9586, #7db8a8, #a8d8cb);
 }
 
-/* Nagłówek */
+/* =========================
+   Nagłówek
+   ========================= */
+
 h1 {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     color: #ffffff;
     font-size: 42px;
     font-weight: 700;
@@ -29,21 +32,167 @@ h1 {
     text-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Panel z informacjami */
+
+/* =========================
+   Górny pasek wyszukiwania
+   ========================= */
+
+/* Pierwszy formularz = search bar */
+body > form:first-of-type {
+    width: min(900px, 95%);
+    margin: 0 auto 30px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: none;
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+    backdrop-filter: blur(8px);
+}
+
+/* Pole wyszukiwania */
+body > form:first-of-type input[type="text"] {
+    flex: 1;
+    min-width: 180px;
+    height: 46px;
+
+    padding: 0 16px;
+
+    border: 2px solid #c9e4de;
+    border-radius: 10px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.95);
+    color: #263238;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    text-align: left;
+
+    transition: 0.25s ease;
+}
+
+body > form:first-of-type input[type="text"]::placeholder {
+    color: #8a9b97;
+}
+
+body > form:first-of-type input[type="text"]:focus {
+    border-color: #6f6aa8;
+    background: #ffffff;
+
+    box-shadow: 0 0 0 4px rgba(111, 106, 168, 0.12);
+}
+
+
+/* Select */
+body > form:first-of-type select {
+    height: 46px;
+
+    padding: 0 14px;
+
+    border: 2px solid #c9e4de;
+    border-radius: 10px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.95);
+    color: #345c54;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+body > form:first-of-type select:hover {
+    border-color: #8dbfb3;
+}
+
+body > form:first-of-type select:focus {
+    border-color: #6f6aa8;
+    box-shadow: 0 0 0 4px rgba(111, 106, 168, 0.12);
+}
+
+
+/* =========================
+   Przyciski
+   ========================= */
+
+form {
+    display: inline-block;
+    margin: 0 6px 30px;
+}
+
+button {
+    height: 46px;
+
+    padding: 0 24px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #496f67;
+    color: white;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+
+    transition: 0.25s ease;
+}
+
+button:hover {
+    background: #365951;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================
+   Panel z informacjami
+   ========================= */
+
 #info {
     width: min(700px, 90%);
     margin: 0 auto 30px;
     padding: 25px 30px;
+
     border: none;
     border-radius: 18px;
+
     background: rgba(255, 255, 255, 0.85);
+
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
     backdrop-filter: blur(8px);
 }
 
 #info h3 {
     padding: 9px 0;
+
     color: #345c54;
+
     font-size: 18px;
     font-weight: 500;
 }
@@ -52,59 +201,53 @@ h1 {
     border-bottom: 1px solid #c9e4de;
 }
 
-/* Przyciski */
-form {
-    display: inline-block;
-    margin: 0 6px 30px;
-}
+#info hr {
+    margin: 8px 0;
 
-button {
-    padding: 12px 24px;
     border: none;
-    border-radius: 10px;
-    background: #496f67;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-    transition: 0.25s ease;
+    border-top: 1px solid #c9e4de;
 }
 
-button:hover {
-    background: #365951;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-}
 
-button:active {
-    transform: translateY(0);
-}
+/* =========================
+   Tabela
+   ========================= */
 
-/* Tabela */
 table {
     width: 95%;
     max-width: 1300px;
+
     margin: 0 auto;
+
     border-collapse: separate;
     border-spacing: 0;
+
     overflow: hidden;
+
     border-radius: 15px;
+
     background: rgba(255, 255, 255, 0.9);
+
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* Nagłówki tabeli */
+
+/* =========================
+   Nagłówki tabeli
+   ========================= */
+
 th {
     padding: 16px 14px;
+
     border: none;
+
     background: #6f6aa8;
     color: white;
+
     font-size: 15px;
     font-weight: 600;
 }
 
-/* Zaokrąglenia górnych rogów */
 th:first-child {
     border-top-left-radius: 15px;
 }
@@ -113,13 +256,21 @@ th:last-child {
     border-top-right-radius: 15px;
 }
 
-/* Komórki */
+
+/* =========================
+   Komórki tabeli
+   ========================= */
+
 td {
     padding: 14px 12px;
+
     border: none;
     border-bottom: 1px solid #d8e9e5;
+
     background: rgba(255, 255, 255, 0.8);
+
     font-size: 15px;
+
     transition: 0.2s ease;
 }
 
@@ -132,6 +283,7 @@ tr:hover td {
     color: #294f47;
 }
 
+
 /* Co drugi wiersz */
 tr:nth-child(even) td {
     background: #f3f9f7;
@@ -141,8 +293,29 @@ tr:nth-child(even):hover td {
     background: #e1f2ed;
 }
 
-/* Responsywność */
+
+/* =========================
+   Przyciski "Edytuj"
+   ========================= */
+
+td form {
+    margin: 0;
+}
+
+td button {
+    height: auto;
+    padding: 9px 16px;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   Responsywność
+   ========================= */
+
 @media (max-width: 900px) {
+
     body {
         padding: 25px 10px;
     }
@@ -155,10 +328,35 @@ tr:nth-child(even):hover td {
         width: 95%;
     }
 
+    /* Search bar */
+    body > form:first-of-type {
+        width: 95%;
+        padding: 12px;
+
+        flex-wrap: wrap;
+    }
+
+    body > form:first-of-type input[type="text"] {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    body > form:first-of-type select {
+        flex: 1;
+    }
+
+    body > form:first-of-type button {
+        flex: 1;
+    }
+
+    /* Tabela */
     table {
         width: 100%;
+
         display: block;
+
         overflow-x: auto;
+
         white-space: nowrap;
     }
 
@@ -168,12 +366,55 @@ tr:nth-child(even):hover td {
     }
 }
 
+
+/* =========================
+   Małe ekrany
+   ========================= */
+
 @media (max-width: 500px) {
+
+    body {
+        padding: 20px 8px;
+    }
+
     h1 {
+        margin-bottom: 20px;
         font-size: 27px;
     }
 
+    /* Search bar */
+    body > form:first-of-type {
+        width: 95%;
+        padding: 10px;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+    body > form:first-of-type input[type="text"],
+    body > form:first-of-type select,
+    body > form:first-of-type button {
+        width: 100%;
+        flex: none;
+    }
+
+    body > form:first-of-type input[type="text"] {
+        height: 44px;
+    }
+
+    body > form:first-of-type select {
+        height: 44px;
+    }
+
+    body > form:first-of-type button {
+        height: 44px;
+    }
+
+    /* Info */
     #info {
+        width: 95%;
         padding: 18px;
     }
 
@@ -181,18 +422,38 @@ tr:nth-child(even):hover td {
         font-size: 15px;
     }
 
+    /* Pozostałe formularze */
     form {
         display: block;
         margin-bottom: 10px;
     }
 
-    button {
+    /* Przycisk "Dodaj podręcznik" */
+    body > form:not(:first-of-type) button {
         width: 90%;
     }
 
     table {
         margin-top: 20px;
     }
+}
+
+
+/* =========================
+   Drobne poprawki
+   ========================= */
+
+input,
+select,
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(111, 106, 168, 0.35);
+    outline-offset: 2px;
 }
 
     </style>
@@ -207,6 +468,8 @@ tr:nth-child(even):hover td {
         <select name="searchOn">
             <option value="pupil">Uczeń</option>
             <option value="book">Książka</option>
+            <option value="ID">ID</option>
+            <option value="payment">Metoda płatności</option>
         </select>
     </form>
 
@@ -231,6 +494,7 @@ tr:nth-child(even):hover td {
 
     <table>
         <tr>
+            <th>ID</th>
             <th>Tytuł książki</th>
             <th>Sprzedający uczeń</th>
             <th>Cena ucznia</th>
@@ -242,6 +506,7 @@ tr:nth-child(even):hover td {
         </tr>
         <% books.forEach((book)=>{%>
         <tr>
+            <td><%= book.ID %></td>
             <td><%= book.title %></td>
             <td><%= book.pupil %></td>
             <td><%= book.pupil_price %></td>

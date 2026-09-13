@@ -30,6 +30,8 @@ const book_by_id_prepare = database.prepare("SELECT * FROM books WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
 const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
 const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
+const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
+
 
 app.get("/", (req, res) => {
     if(!req.session.user){
@@ -150,6 +152,12 @@ app.post("/", (req, res)=>{
     }
     else if(req.body.searchOn == "book"){
         books = search_on_book_prepare.all(`%${req.body.searchfield}%`)
+    }
+    else if(req.body.searchOn == "ID"){
+        books = book_by_id_prepare.all(parseInt(req.body.searchfield))
+    }
+    else if(req.body.searchOn == "payment"){
+        books = books_by_payment_prepare.all(`%${req.body.searchfield}%`)
     }
 
 
