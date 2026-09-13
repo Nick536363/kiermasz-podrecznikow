@@ -22,24 +22,32 @@ declare module 'fastify' {
     }
 }
 
-export default fp(async function requireOwner(fastify: FastifyInstance) {
-    fastify.decorate(
-        'requireOwner',
-        (getOwnerId: GetOwnerId) =>
-            async (request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) => {
-                if (request.user.role === 'ADMIN') {
-                    return;
-                }
+export default fp(
+    /**
+     * @description Fastify plugin, that requires user to be the owner of a post, or a listing.
+     */
+    async function requireOwner(fastify: FastifyInstance) {
+        fastify.decorate(
+            'requireOwner',
+            (getOwnerId: GetOwnerId) =>
+                async (
+                    request: FastifyRequest<{ Params: { id: number } }>,
+                    reply: FastifyReply,
+                ) => {
+                    if (request.user.role === 'ADMIN') {
+                        return;
+                    }
 
-                const ownerId = await getOwnerId(request.params.id);
+                    const ownerId = await getOwnerId(request.params.id);
 
-                if (ownerId === null) {
-                    reply.notFound();
-                    return;
-                }
-                if (ownerId !== request.user.id) {
-                    reply.forbidden('You do not own this resource');
-                }
-            },
-    );
-});
+                    if (ownerId === null) {
+                        reply.notFound();
+                        return;
+                    }
+                    if (ownerId !== request.user.id) {
+                        reply.forbidden('You do not own this resource');
+                    }
+                },
+        );
+    },
+);

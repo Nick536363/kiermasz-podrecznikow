@@ -6,7 +6,6 @@
  *  + Defines API statistic routes.
  */
 
-import type { FastifyInstance } from 'fastify';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { apiReady, apiVersion, isApiHealthy } from './statistics.services.js';
 
@@ -14,7 +13,7 @@ import { apiReady, apiVersion, isApiHealthy } from './statistics.services.js';
  * @description Encapsulates statistic routes
  * @param {FastifyInstance} fastify Encapsulated Fastify Instance
  */
-export const statisticRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance) => {
+export const statisticRoutes: FastifyPluginAsyncZod = async (fastify) => {
     // API VERSION
     fastify.get('/', async () => apiVersion());
 
@@ -34,7 +33,6 @@ export const statisticRoutes: FastifyPluginAsyncZod = async (fastify: FastifyIns
     //
     // DEBUG!
     //
-
     if (process.env.NODE_ENV !== 'production') {
         fastify.get('/_debug/routes', async () => fastify.printRoutes());
     }

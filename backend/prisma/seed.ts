@@ -10,6 +10,9 @@ import { defineConfig, env } from 'prisma/config';
 import { prisma } from '../src/db/client';
 import argon2 from 'argon2';
 
+/**
+ * @description Create user "root" with password from the .env file.
+ */
 async function main() {
     const passwordHash = await argon2.hash(env('ROOT_PASSWORD'), { type: argon2.argon2id });
     await prisma.user.upsert({

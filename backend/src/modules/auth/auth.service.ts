@@ -13,6 +13,12 @@ import { prisma } from '@/db/client.js';
 
 type UserPayload = { id: number; role: 'USER' | 'ADMIN' };
 
+/**
+ * @description Verifies users password and name.
+ * @param {string} name User name
+ * @param {string} password Unhashed password
+ * @returns Is user verified.
+ */
 export async function verifyCredentials(name: string, password: string) {
     const user = await prisma.user.findUnique({ where: { name } });
 
@@ -25,10 +31,19 @@ export async function verifyCredentials(name: string, password: string) {
     return valid ? user : null;
 }
 
-export function issueTokens(app: FastifyInstance, user: UserPayload & { tokenVersion: number }) {
-    const accessToken = app.jwt.sign({ id: user.id, role: user.role }, { expiresIn: '15m' });
+/**
+ * @description Creates new token for user.
+ * @param {FastifyInstance} fastify
+ * @param {UserPayload} user User Data
+ * @returns New tokens
+ */
+export function issueTokens(
+    fastify: FastifyInstance,
+    user: UserPayload & { tokenVersion: number },
+) {
+    const accessToken = fastify.jwt.sign({ id: user.id, role: user.role }, { expiresIn: '15m' });
 
-    const refreshToken = app.jwt.sign(
+    const refreshToken = fastify.jwt.sign(
         { id: user.id, tokenVersion: user.tokenVersion },
         { expiresIn: '30d', key: process.env.JWT_REFRESH_SECRET },
     );

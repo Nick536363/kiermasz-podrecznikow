@@ -12,8 +12,13 @@ import { prisma } from '@/db/client.js';
 import * as authService from './auth.service.js';
 import { LoginSchema, AuthResponseSchema } from './auth.schemas.js';
 
-export const authRoutes: FastifyPluginAsyncZod = async (app) => {
-    app.post(
+/**
+ * @description Encapsulates statistic routes
+ * @param {FastifyInstance} fastify Encapsulated Fastify Instance
+ */
+export const authRoutes: FastifyPluginAsyncZod = async (fastify) => {
+    // LOGIN
+    fastify.post(
         '/login',
         {
             schema: { body: LoginSchema, response: { 200: AuthResponseSchema } },
@@ -28,7 +33,7 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
                 return reply.unauthorized('Invalid credentials');
             }
 
-            const { accessToken, refreshToken } = authService.issueTokens(app, user);
+            const { accessToken, refreshToken } = authService.issueTokens(fastify, user);
             reply.setCookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
@@ -40,7 +45,8 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
         },
     );
 
-    app.post(
+    // REFRESH TOKEN
+    fastify.post(
         '/refresh',
         {
             schema: { response: { 200: AuthResponseSchema } },
@@ -53,14 +59,14 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
             }
 
             try {
-                const payload = app.jwt.verify(token, { key: process.env.JWT_REFRESH_SECRET });
+                const payload = fastify.jwt.verify(token, { key: process.env.JWT_REFRESH_SECRET });
                 const user = await prisma.user.findUnique({ where: { id: payload.id } });
 
                 if (!user || user.tokenVersion !== payload.tokenVersion) {
                     return reply.unauthorized('Token revoked');
                 }
 
-                const { accessToken, refreshToken } = authService.issueTokens(app, user);
+                const { accessToken, refreshToken } = authService.issueTokens(fastify, user);
                 reply.setCookie('refreshToken', refreshToken, {
                     httpOnly: true,
                     secure: true,
@@ -75,10 +81,11 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
         },
     );
 
-    app.post(
+    // LOGOUT
+    fastify.post(
         '/logout',
         {
-            preHandler: [app.authenticate],
+            preHandler: [fastify.authenticate],
         },
         async (request, reply) => {
             await prisma.user.update({

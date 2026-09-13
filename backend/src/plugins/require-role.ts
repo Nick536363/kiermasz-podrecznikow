@@ -19,14 +19,19 @@ declare module 'fastify' {
     }
 }
 
-export default fp(async function requireRole(fastify: FastifyInstance) {
-    fastify.decorate(
-        'requireRole',
-        (...roles: Role[]) =>
-            async (request: FastifyRequest, reply: FastifyReply) => {
-                if (!roles.includes(request.user.role)) {
-                    reply.forbidden('Insufficient permissions');
-                }
-            },
-    );
-});
+export default fp(
+    /**
+     * @description Fastify plugin, that requires the requesting user to have a certain role.
+     */
+    async function requireRole(fastify: FastifyInstance) {
+        fastify.decorate(
+            'requireRole',
+            (...roles: Role[]) =>
+                async (request: FastifyRequest, reply: FastifyReply) => {
+                    if (!roles.includes(request.user.role)) {
+                        reply.forbidden('Insufficient permissions');
+                    }
+                },
+        );
+    },
+);

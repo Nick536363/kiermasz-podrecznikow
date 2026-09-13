@@ -6,7 +6,6 @@
  *  + Defines listing routes.
  */
 
-import { FastifyInstance } from 'fastify';
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 
 import { prisma } from '@/db/client.js';
@@ -19,7 +18,25 @@ import {
     UpdateListingSchema,
 } from './listings.schemas.js';
 
-export const listingRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance) => {
+/**
+ * @description Encapsulates statistic routes
+ * @param {FastifyInstance} fastify Encapsulated Fastify Instance
+ */
+export const listingRoutes: FastifyPluginAsyncZod = async (fastify) => {
+    // ME
+    fastify.get(
+        '/me',
+        {
+            preHandler: [fastify.authenticate],
+            schema: { querystring: ListListingsQuerySchema },
+        },
+        async (request) => {
+            const { page, limit } = request.query;
+
+            return listingService.listListings(page, limit, request.user.id);
+        },
+    );
+
     // CREATE
     fastify.post(
         '/',
@@ -43,9 +60,9 @@ export const listingRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInsta
             schema: { querystring: ListListingsQuerySchema },
         },
         async (request) => {
-            const { pages, limit } = request.query;
+            const { page, limit } = request.query;
 
-            return listingService.listListings(pages, limit);
+            return listingService.listListings(page, limit);
         },
     );
 
@@ -81,7 +98,11 @@ export const listingRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInsta
                     return post?.authorId ?? null;
                 }),
             ],
-            schema: { body: UpdateListingSchema, response: { 200: ListingResponseSchema } },
+            schema: {
+                params: ListingParamSchema,
+                body: UpdateListingSchema,
+                response: { 200: ListingResponseSchema },
+            },
         },
         async (request) => listingService.updateListing(request.params.id, request.body),
     );
@@ -101,6 +122,9 @@ export const listingRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInsta
                     return post?.authorId ?? null;
                 }),
             ],
+            schema: {
+                params: ListingParamSchema,
+            },
         },
         async (request, reply) => {
             await listingService.deleteListing(request.params.id);

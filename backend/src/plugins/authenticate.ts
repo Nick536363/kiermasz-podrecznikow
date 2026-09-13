@@ -25,14 +25,19 @@ declare module 'fastify' {
     }
 }
 
-export default fp(async function authenticate(fastify: FastifyInstance) {
-    fastify.register(jwt, { secret: process.env.JWT_SECRET! });
+export default fp(
+    /**
+     * @description Fastify plugin, that requiers users to be authenticated.
+     */
+    async function authenticate(fastify: FastifyInstance) {
+        fastify.register(jwt, { secret: process.env.JWT_SECRET! });
 
-    fastify.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
-        try {
-            await request.jwtVerify();
-        } catch {
-            reply.unauthorized('Invalid or missing token');
-        }
-    });
-});
+        fastify.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
+            try {
+                await request.jwtVerify();
+            } catch {
+                reply.unauthorized('Invalid or missing token');
+            }
+        });
+    },
+);

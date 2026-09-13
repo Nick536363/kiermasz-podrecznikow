@@ -6,7 +6,6 @@
  *  + Defines users CRUD routes.
  */
 
-import type { FastifyInstance } from 'fastify';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 
 import {
@@ -18,7 +17,11 @@ import {
 } from './users.schemas.js';
 import * as usersService from './users.service.js';
 
-export const userRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance) => {
+/**
+ * @description Encapsulates statistic routes
+ * @param {FastifyInstance} fastify Encapsulated Fastify Instance
+ */
+export const userRoutes: FastifyPluginAsyncZod = async (fastify) => {
     // ME
     fastify.get(
         '/me',
@@ -101,9 +104,13 @@ export const userRoutes: FastifyPluginAsyncZod = async (fastify: FastifyInstance
         '/:id',
         {
             preHandler: [fastify.authenticate, fastify.requireRole('ADMIN')],
-            schema: { body: UpdateUserSchema, response: { 200: UserResponseSchema } },
+            schema: {
+                params: UserParamsSchema,
+                body: UpdateUserSchema,
+                response: { 200: UserResponseSchema },
+            },
         },
-        async (request) => usersService.updateUser(request.user.id, request.body),
+        async (request) => usersService.updateUser(request.params.id, request.body),
     );
 
     // DELERE
