@@ -522,12 +522,12 @@ select:focus-visible {
                 </form>
             </td>
             <td>
-                <form method="post" action="/book/sell">
+                <form method="get" action="/book/sell/confirm">
                     <button type="submit" name="idC" value="<%= book.ID %>">Sprzedaj za gotówkę</button>
                 </form>
             </td>
             <td>
-                <form method="post" action="/book/sell">
+                <form method="get" action="/book/sell/confirm">
                     <button type="submit" name="idB" value="<%= book.ID %>">Sprzedaj za BLIK</button>
                 </form>
             </td>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprzedać?</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 40px 20px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #263238;
+
+            background: linear-gradient(
+                135deg,
+                #5a9586,
+                #7db8a8,
+                #a8d8cb
+            );
+        }
+
+        h1 {
+            width: min(700px, 95%);
+            padding: 25px 30px;
+
+            border-radius: 18px;
+
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+            color: #345c54;
+            font-size: 30px;
+            font-weight: 600;
+            line-height: 1.4;
+
+            text-align: center;
+
+            backdrop-filter: blur(8px);
+        }
+
+        form {
+            margin: 0;
+        }
+
+        button {
+            min-width: 140px;
+            height: 46px;
+            padding: 0 24px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #496f67;
+            color: white;
+
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+
+            transition: 0.25s ease;
+        }
+
+        button:hover {
+            background: #365951;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Przycisk sprzedaży */
+        form[action="/book/sell"] button {
+            background: #6f6aa8;
+        }
+
+        form[action="/book/sell"] button:hover {
+            background: #59548d;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 20px 10px;
+                gap: 18px;
+            }
+
+            h1 {
+                padding: 20px 15px;
+                font-size: 23px;
+            }
+
+            button {
+                width: 90vw;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>
+        Sprzedać książke <%= book.ID %> za <%= payment_method %> ?
+    </h1>
+
+    <form method="get" action="/">
+        <button type="confirm">Cofnij</button>
+    </form>
+
+    <form method="post" action="/book/sell">
+        <% if (query.idC) { %>
+            <button type="confirm" name="idC" value=<%= book.ID %>>Sprzedaj</button>
+        <% } else if(query.idB) { %>
+            <button type="confirm" name="idB" value=<%= book.ID %>>Sprzedaj</button>
+        <% } %>
+        
+    </form>
+
+</body>
+</html>
