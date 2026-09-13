@@ -26,7 +26,6 @@ const books_prepare = database.prepare("SELECT * FROM books")
 const non_sold_prepare = database.prepare("SELECT COUNT(title) AS not_sold FROM books WHERE status = 'Nie sprzedana'")
 const sold_prepare = database.prepare("SELECT COUNT(title) AS sold FROM books WHERE status = 'Sprzedana'")
 const all_money_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE status = 'Sprzedana'")
-const commision_prepare = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE status = 'Sprzedana'")
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
 const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date) VALUES (?, ?, ?, ?, ?, ?)",)
 const update_book_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, status = ?, payment_method = ? WHERE ID = ?")
@@ -48,17 +47,17 @@ app.get("/", (req, res) => {
     const non_sold = non_sold_prepare.get()
     const sold = sold_prepare.get()
     const all_money = all_money_prepare.get()
-    const commision = commision_prepare.get()
     const all_cash = all_payments_prepare.get("Gotówka")
     const all_blik = all_payments_prepare.get("BLIK")
-    const commision_cash = all_paymements_commision_preapre.get("Gotówka").commision
-    const commision_blik = all_paymements_commision_preapre.get("BLIK").commision
+    const commision_cash = Math.floor(all_paymements_commision_preapre.get("Gotówka").commision)
+    const commision_blik = Math.floor(all_paymements_commision_preapre.get("BLIK").commision)
+    const commision = Math.floor(commision_blik+commision_cash)
     let sell_info = {
         sum_books: all_books.sum_books,
         non_sold: non_sold.not_sold,
         sold: sold.sold,
-        all_money: all_money.money+commision.commision,
-        commision: commision.commision,
+        all_money: all_money.money+commision,
+        commision: commision,
         all_cash:all_cash.money+commision_cash,
         commision_cash: commision_cash,
         all_blik: all_blik.money+commision_blik,
@@ -136,17 +135,17 @@ app.post("/", (req, res)=>{
     const non_sold = non_sold_prepare.get()
     const sold = sold_prepare.get()
     const all_money = all_money_prepare.get()
-    const commision = commision_prepare.get()
     const all_cash = all_payments_prepare.get("Gotówka")
     const all_blik = all_payments_prepare.get("BLIK")
-    const commision_cash = Math.floor(all_cash.money/10)
-    const commision_blik = Math.floor(all_blik.money/10)
+    const commision_cash = Math.floor(all_paymements_commision_preapre.get("Gotówka").commision)
+    const commision_blik = Math.floor(all_paymements_commision_preapre.get("BLIK").commision)
+    const commision = Math.floor(commision_blik+commision_cash)
     let sell_info = {
         sum_books: all_books.sum_books,
         non_sold: non_sold.not_sold,
         sold: sold.sold,
-        all_money: all_money.money+commision.commision,
-        commision: commision.commision,
+        all_money: all_money.money+commision,
+        commision: commision,
         all_cash:all_cash.money+commision_cash,
         commision_cash: commision_cash,
         all_blik: all_blik.money+commision_blik,
