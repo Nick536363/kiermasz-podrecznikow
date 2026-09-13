@@ -12,12 +12,16 @@ export const CreateListingSchema = z.object({
     name: z.string().min(2).max(100),
     description: z.string().min(2).max(200),
     seller: z.string().min(2).max(100),
+    price: z.string().min(1).max(200),
+    originalPrice: z.string().min(1).max(200),
 });
 
 export const UpdateListingSchema = z.object({
     name: z.string().min(2).max(100).optional(),
     description: z.string().min(2).max(200).optional(),
     seller: z.string().min(2).max(100).optional(),
+    price: z.string().min(1).max(200).optional(),
+    originalPrice: z.string().min(1).max(200).optional(),
 });
 
 export const ListingParamSchema = z.object({
@@ -34,6 +38,8 @@ export const ListingResponseSchema = z.object({
     name: z.string(),
     description: z.string(),
     seller: z.string(),
+    price: z.string(),
+    originalPrice: z.string(),
     createdAt: z.date(),
     updatedAt: z.date(),
     authorId: z.number(),

@@ -10,7 +10,7 @@ import { z } from 'zod/v4';
 
 import { omitUndefined } from '@/lib/omit-undefined.js';
 import { prisma } from '@/db/client.js';
-import type { Prisma } from '@/db/generated/client.js';
+import { Prisma } from '@/db/generated/client.js';
 import { CreateListingSchema, UpdateListingSchema } from './listings.schemas.js';
 
 /**
@@ -24,6 +24,8 @@ export async function createListing(id: number, data: z.infer<typeof CreateListi
             name: data.name,
             description: data.description,
             seller: data.seller,
+            price: data.price,
+            originalPrice: data.originalPrice,
             updatedAt: new Date(),
             authorId: id,
         },

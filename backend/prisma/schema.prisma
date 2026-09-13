@@ -28,6 +28,8 @@ model Listing {
     name            String
     description     String
     seller          String
+    price           String
+    originalPrice   String
     createdAt       DateTime            @default(now())
     updatedAt       DateTime
     authorId        Int?
