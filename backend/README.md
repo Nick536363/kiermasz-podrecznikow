@@ -177,7 +177,9 @@ Response:
     "users": [
         {
             "id": 1,
-            "name": "root"
+            "name": "root",
+            "role": "ADMIN",
+            "createdAt": "2026-09-12T21:33:29.004Z"
         }
     ],
     "total": 1,
@@ -253,7 +255,20 @@ Response:
         {
             "id": 1,
             "name": "hello",
-            "description": "world"
+            "description": "world",
+            "seller": "yes",
+            "createdAt": "2026-09-12T21:33:44.091Z",
+            "updatedAt": "2026-09-12T21:33:43.995Z",
+            "authorId": 1
+        },
+        {
+            "id": 2,
+            "name": "hello2",
+            "description": "world2",
+            "seller": "yes2",
+            "createdAt": "2026-09-12T21:33:44.091Z",
+            "updatedAt": "2026-09-12T21:33:43.995Z",
+            "authorId": 2
         }
     ],
     "total": 1,
@@ -274,7 +289,11 @@ Response:
         {
             "id": 1,
             "name": "hello",
-            "description": "world"
+            "description": "world",
+            "seller": "yes",
+            "createdAt": "2026-09-12T21:33:44.091Z",
+            "updatedAt": "2026-09-12T21:33:43.995Z",
+            "authorId": 1
         }
     ],
     "total": 1,
