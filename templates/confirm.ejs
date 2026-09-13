@@ -6,116 +6,341 @@
     <title>Sprzedać?</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    body {
+        min-height: 100vh;
+        padding: 40px 20px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #263238;
+
+        background: linear-gradient(
+            135deg,
+            #5a9586,
+            #7db8a8,
+            #a8d8cb
+        );
+    }
+
+    /* =========================
+       Nagłówek
+       ========================= */
+
+    h1 {
+        width: min(700px, 95%);
+        padding: 25px 30px;
+
+        border: none;
+        border-radius: 18px;
+
+        background: rgba(255, 255, 255, 0.85);
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+        color: #345c54;
+
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 1.4;
+
+        backdrop-filter: blur(8px);
+    }
+
+
+    /* =========================
+       Tabela
+       ========================= */
+
+    table {
+        width: min(900px, 95%);
+
+        border-collapse: separate;
+        border-spacing: 0;
+
+        overflow: hidden;
+
+        border-radius: 15px;
+
+        background: rgba(255, 255, 255, 0.9);
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+
+    /* =========================
+       Nagłówki tabeli
+       ========================= */
+
+    th {
+        padding: 16px 14px;
+
+        border: none;
+
+        background: #6f6aa8;
+        color: white;
+
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    th:first-child {
+        border-top-left-radius: 15px;
+    }
+
+    th:last-child {
+        border-top-right-radius: 15px;
+    }
+
+
+    /* =========================
+       Komórki tabeli
+       ========================= */
+
+    td {
+        padding: 14px 12px;
+
+        border: none;
+        border-bottom: 1px solid #d8e9e5;
+
+        background: rgba(255, 255, 255, 0.8);
+
+        color: #263238;
+
+        font-size: 15px;
+
+        transition: 0.2s ease;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background: #e6f5f1;
+        color: #294f47;
+    }
+
+
+    /* =========================
+       Co drugi wiersz
+       ========================= */
+
+    tr:nth-child(even) td {
+        background: #f3f9f7;
+    }
+
+    tr:nth-child(even):hover td {
+        background: #e1f2ed;
+    }
+
+
+    /* =========================
+       Formularze
+       ========================= */
+
+    form {
+        margin: 0;
+    }
+
+
+    /* =========================
+       Przyciski
+       ========================= */
+
+    button {
+        min-width: 140px;
+        height: 46px;
+
+        padding: 0 24px;
+
+        border: none;
+        border-radius: 10px;
+
+        background: #496f67;
+        color: white;
+
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+
+        transition: 0.25s ease;
+    }
+
+    button:hover {
+        background: #365951;
+
+        transform: translateY(-2px);
+
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+
+    /* =========================
+       Przycisk "Zapisz"
+       ========================= */
+
+    td button {
+        min-width: 100px;
+        height: auto;
+
+        padding: 9px 16px;
+
+        background: #6f6aa8;
+
+        font-size: 14px;
+    }
+
+    td button:hover {
+        background: #59548d;
+    }
+
+
+    /* =========================
+       Przycisk "Sprzedaj / Odwołaj"
+       ========================= */
+
+    form:last-of-type button {
+        background: #6f6aa8;
+    }
+
+    form:last-of-type button:hover {
+        background: #59548d;
+    }
+
+
+    /* =========================
+       Przyciski pod tabelą
+       ========================= */
+
+    form:first-of-type button {
+        background: #496f67;
+    }
+
+    form:first-of-type button:hover {
+        background: #365951;
+    }
+
+
+    /* =========================
+       Focus
+       ========================= */
+
+    button:focus-visible {
+        outline: 3px solid rgba(111, 106, 168, 0.35);
+        outline-offset: 2px;
+    }
+
+    input,
+    select,
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+
+    /* =========================
+       Responsywność
+       ========================= */
+
+    @media (max-width: 900px) {
 
         body {
-            min-height: 100vh;
-            padding: 40px 20px;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-
-            font-family: "Segoe UI", Arial, sans-serif;
-            color: #263238;
-
-            background: linear-gradient(
-                135deg,
-                #5a9586,
-                #7db8a8,
-                #a8d8cb
-            );
+            padding: 30px 15px;
+            gap: 20px;
         }
 
         h1 {
-            width: min(700px, 95%);
-            padding: 25px 30px;
+            width: 95%;
+            padding: 22px 25px;
 
-            border-radius: 18px;
+            font-size: 27px;
+        }
 
-            background: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        table {
+            width: 95%;
 
-            color: #345c54;
-            font-size: 30px;
-            font-weight: 600;
-            line-height: 1.4;
+            display: block;
 
-            text-align: center;
+            overflow-x: auto;
 
-            backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        th,
+        td {
+            padding: 12px 10px;
+        }
+    }
+
+
+    /* =========================
+       Małe ekrany
+       ========================= */
+
+    @media (max-width: 500px) {
+
+        body {
+            padding: 20px 8px;
+            gap: 16px;
+        }
+
+        h1 {
+            width: 95%;
+
+            padding: 20px 15px;
+
+            font-size: 23px;
+            line-height: 1.35;
+        }
+
+        table {
+            width: 95%;
+        }
+
+        th,
+        td {
+            padding: 11px 10px;
+
+            font-size: 14px;
+        }
+
+        td button {
+            min-width: 90px;
+            padding: 8px 13px;
+
+            font-size: 13px;
         }
 
         form {
-            margin: 0;
+            width: 100%;
         }
 
-        button {
-            min-width: 140px;
-            height: 46px;
-            padding: 0 24px;
-
-            border: none;
-            border-radius: 10px;
-
-            background: #496f67;
-            color: white;
-
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: 600;
-
-            cursor: pointer;
-
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-
-            transition: 0.25s ease;
+        form button {
+            width: 90%;
+            max-width: 320px;
         }
+    }
+</style>
 
-        button:hover {
-            background: #365951;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Przycisk sprzedaży */
-        form[action="/book/sell"] button {
-            background: #6f6aa8;
-        }
-        form[action="/book/sale_cancel"] button {
-            background: #6f6aa8;
-        }
-
-        form[action="/book/sell"] button:hover {
-            background: #59548d;
-        }
-        form[action="/book/sale_cancel"] button:hover {
-            background: #59548d;
-        }
-
-        @media (max-width: 500px) {
-            body {
-                padding: 20px 10px;
-                gap: 18px;
-            }
-
-            h1 {
-                padding: 20px 15px;
-                font-size: 23px;
-            }
-
-            button {
-                width: 90vw;
-                max-width: 320px;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -123,6 +348,21 @@
     <h1>
         <%= header_text %> ?
     </h1>
+
+    <% if (query.idC || query.idB) { %>
+        <table>
+            <tr>
+                <th>Tytuł książki</th>
+                <th>Sprzedający uczeń</th>
+                <th>Kwota do pobrania</th>
+            </tr>
+            <tr>
+                <td><%= book.title %></td>
+                <td><%= book.pupil %></td>
+                <td><%= book.pupil_price+book.commision %> zł</td>
+            </tr>
+    </table>
+    <% } %>
 
     <form method="get" action="/">
         <button type="confirm">Cofnij</button>

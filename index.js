@@ -225,16 +225,18 @@ app.get("/book/sell/confirm", (req, res)=>{
     }
     if(req.query.idC){
         res.render(__dirname+"/templates/confirm.ejs", {
-            header_text: `Sprzedać książkę ${req.query.idC} za gotówkę`,
+            header_text: `Sprzedać książkę ${req.query.idC} z płatnością gotówką`,
             action: "/book/sell",
+            book: book_by_id_prepare.get(parseInt(req.query.idC)),
             query: req.query
         })
     }
 
     else if(req.query.idB){
         res.render(__dirname+"/templates/confirm.ejs", {
-            header_text: `Sprzedać książkę ${req.query.idB} za BLIK`,
+            header_text: `Sprzedać książkę ${req.query.idB} z płatnością BLIK`,
             action: "/book/sell",
+            book: book_by_id_prepare.get(parseInt(req.query.idB)),
             query: req.query
         })
     }
