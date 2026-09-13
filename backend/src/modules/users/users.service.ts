@@ -46,7 +46,7 @@ export async function createUser(data: z.infer<typeof CreateUserSchema>) {
 export async function listUsers(page: number, limit: number) {
     const [users, total] = await Promise.all([
         prisma.user.findMany({
-            select: { id: true, name: true },
+            select: PUBLIC_SELECT,
             orderBy: { createdAt: 'desc' },
             skip: (page - 1) * limit,
             take: limit,

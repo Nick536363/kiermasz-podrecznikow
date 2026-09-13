@@ -43,7 +43,6 @@ export async function listListings(page: number, limit: number, authorId?: numbe
     const [listings, total] = await Promise.all([
         prisma.listing.findMany({
             where,
-            select: { id: true, name: true, description: true },
             orderBy: { createdAt: 'desc' },
             skip: (page - 1) * limit,
             take: limit,
