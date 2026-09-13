@@ -135,8 +135,11 @@ app.post("/book/add", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    let date = new Date().format("Y-MM-DD")
-    if(parseInt(req.body.pupil_price) < 10)
+    let date = new Date().format("Y-MM-dd")
+    if(parseInt(req.body.pupil_price) < 10){
+        log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował dodać książke z ceną niedozwoloną (${req.body.pupil_price})`)
+        res.redirect("/")
+    }
     new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), "Nie sprzedana", date)
     log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} dodał nową książkę`)
     return res.redirect("/")
