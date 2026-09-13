@@ -36,6 +36,7 @@ const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title
 const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const all_paymements_commision_preapre = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
+const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ? WHERE ID = ?")
 
 
 app.get("/", (req, res) => {
@@ -186,6 +187,19 @@ app.post("/book/change", (req, res)=>{
         update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)/10), req.body.status, req.body.payment_method, parseInt(req.body.ID))
         return res.redirect("/")
     }
+})
+
+app.post("/book/sell", (req, res)=>{
+    if(!req.session.user){
+        return res.redirect("/login")
+    }
+    if(req.body.idC){
+        sell_book_prepare.run("Gotówka", req.body.idC)
+    }
+    else if(req.body.idB){
+        sell_book_prepare.run("BLIK", req.body.idB)
+    }
+    return res.redirect("/")
 })
 
 app.listen(PORT, () => {
