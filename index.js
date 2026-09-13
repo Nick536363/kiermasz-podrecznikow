@@ -40,7 +40,7 @@ const non_sold_prepare = database.prepare("SELECT COUNT(title) AS not_sold FROM 
 const sold_prepare = database.prepare("SELECT COUNT(title) AS sold FROM books WHERE status = 'Sprzedana'")
 const all_money_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE status = 'Sprzedana'")
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
-const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date) VALUES (?, ?, ?, ?, ?, ?)",)
+const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date, payment_method, sold_at, sold_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",)
 const update_book_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ? WHERE ID = ?")
 const book_by_id_prepare = database.prepare("SELECT * FROM books WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
@@ -48,8 +48,8 @@ const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title
 const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const all_paymements_commision_preapre = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
-const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ? WHERE ID = ? AND status = 'Nie sprzedana'")
-const cancel_book_sale_prepare = database.prepare("UPDATE books SET status = 'Nie sprzedana', payment_method = '-' WHERE ID = ? AND status = 'Sprzedana'")
+const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ?, sold_at = ?, sold_by = ? WHERE ID = ? AND status = 'Nie sprzedana'")
+const cancel_book_sale_prepare = database.prepare("UPDATE books SET status = 'Nie sprzedana', payment_method = '-', sold_at = '-', sold_by = '-'  WHERE ID = ? AND status = 'Sprzedana'")
 const user_by_id_prepare = database.prepare("SELECT username FROM users WHERE uID = ?")
 
 
@@ -106,15 +106,6 @@ app.get("/book/add", (req, res)=>{
     res.sendFile(__dirname+"/templates/add.html")
 })
 
-app.get("/change", (req, res)=>{
-    if(!req.session.user){
-        return res.redirect("/login")
-    }
-    const books = books_prepare.all()
-    res.render(__dirname+"/templates/change.ejs", {
-        books: books
-    })
-})
 
 app.post("/login", (req, res) => {
     const user = req.body.user
@@ -136,7 +127,7 @@ app.post("/book/add", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
-    let date = new Date().format("Y-MM-dd")
+    let date = new Date().format("Y-MM-dd HH:mm")
     let price = Number(req.body.pupil_price)
     if(!Number.isInteger(price) || price < 10 || price > 100){
         log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował dodać książke z ceną niedozwoloną (${req.body.pupil_price})`)
@@ -145,7 +136,7 @@ app.post("/book/add", (req, res)=>{
             error: "Książka nie została wpisana w system. Próba wpisania niedozwolonej ceny została zapisana."
         })
     }
-    new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), "Nie sprzedana", date)
+    new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), "Nie sprzedana", date, "-", "-", "-")
     log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} dodał nową książkę:{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\n}`)
     return res.redirect("/")
 })
@@ -253,15 +244,16 @@ app.post("/book/sell", (req, res)=>{
     if(!req.session.user){
         return res.redirect("/login")
     }
+    let date = new Date().format("Y-MM-dd HH:mm")
     if(req.body.idC){
-        if(sell_book_prepare.run("Gotówka", req.body.idC).changes != 1){
+        if(sell_book_prepare.run("Gotówka", date, user_by_id_prepare.get(parseInt(req.session.user)).username, req.body.idC).changes != 1){
             log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował sprzedać książkę ${req.body.idC} za gotówkę, błąd sprzedaży`)
             return res.redirect("/book/sell/error")
         }
         log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} sprzedał książkę ${req.body.idC} za gotówkę`)
     }
     else if(req.body.idB){
-        if(sell_book_prepare.run("BLIK", req.body.idB).changes != 1){
+        if(sell_book_prepare.run("BLIK", date, user_by_id_prepare.get(parseInt(req.session.user)).username , req.body.idB).changes != 1){
             log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował sprzedać książkę ${req.body.idB} za BLIK, błąd sprzedaży`)
             return res.redirect("/book/sell/error")
         }
@@ -272,7 +264,7 @@ app.post("/book/sell", (req, res)=>{
 
 app.get("/book/sell/error", (req, res)=>{
     if(!req.session.user){
-        res.redirect("/login")
+        return res.redirect("/login")
     }
     res.render(__dirname+"/templates/error", {
         title: "błąd sprzedaży",
@@ -282,7 +274,7 @@ app.get("/book/sell/error", (req, res)=>{
 
 app.get("/book/sale_cancel/confirm", (req, res)=>{
     if(!req.session.user){
-        res.redirect("/login")
+        return res.redirect("/login")
     }
     return res.render(__dirname+"/templates/confirm.ejs",{
         header_text: `Odwołać sprzedaż książki ${req.query.id_cancel}`,
@@ -293,7 +285,7 @@ app.get("/book/sale_cancel/confirm", (req, res)=>{
 
 app.post("/book/sale_cancel", (req, res)=>{
     if(!req.session.user){
-        res.redirect("/login")
+        return res.redirect("/login")
     }
     if(cancel_book_sale_prepare.run(parseInt(req.body.id_cancel)).changes != 1){
         log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował odwołać sprzedaż książki ${req.body.id_cancel}, błąd odwołania`)
@@ -305,7 +297,7 @@ app.post("/book/sale_cancel", (req, res)=>{
 
 app.get("/book/sale_cancel/error", (req, res)=>{
     if(!req.session.user){
-        res.redirect("/login")
+        return res.redirect("/login")
     }
     res.render(__dirname+"/templates/error", {
         title: "błąd odwołania sprzedaży",
