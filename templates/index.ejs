@@ -505,6 +505,7 @@ select:focus-visible {
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
         <% books.forEach((book)=>{%>
         <tr>
@@ -529,6 +530,11 @@ select:focus-visible {
             <td>
                 <form method="get" action="/book/sell/confirm">
                     <button type="submit" name="idB" value="<%= book.ID %>">Sprzedaj za BLIK</button>
+                </form>
+            </td>
+            <td>
+                <form method="get" action="/book/sale_cancel/confirm">
+                    <button type="submit" name="id_cancel" value="<%= book.ID %>">Odwołaj sprzedaż</button>
                 </form>
             </td>
         </tr>

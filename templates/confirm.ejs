@@ -88,8 +88,14 @@
         form[action="/book/sell"] button {
             background: #6f6aa8;
         }
+        form[action="/book/sale_cancel"] button {
+            background: #6f6aa8;
+        }
 
         form[action="/book/sell"] button:hover {
+            background: #59548d;
+        }
+        form[action="/book/sale_cancel"] button:hover {
             background: #59548d;
         }
 
@@ -115,18 +121,20 @@
 <body>
 
     <h1>
-        Sprzedać książke <%= book.ID %> za <%= payment_method %> ?
+        <%= header_text %> ?
     </h1>
 
     <form method="get" action="/">
         <button type="confirm">Cofnij</button>
     </form>
 
-    <form method="post" action="/book/sell">
+    <form method="post" action=<%= action %>>
         <% if (query.idC) { %>
-            <button type="confirm" name="idC" value=<%= book.ID %>>Sprzedaj</button>
+            <button type="confirm" name="idC" value=<%= query.idC %>>Sprzedaj</button>
         <% } else if(query.idB) { %>
-            <button type="confirm" name="idB" value=<%= book.ID %>>Sprzedaj</button>
+            <button type="confirm" name="idB" value=<%= query.idB %>>Sprzedaj</button>
+        <% } else if(query.id_cancel) { %>
+            <button type="confirm" name="id_cancel" value=<%= query.id_cancel %>>Odwołaj</button>
         <% } %>
         
     </form>

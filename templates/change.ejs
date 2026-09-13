@@ -170,26 +170,12 @@ button:active {
             <th>Tytuł książki</th>
             <th>Sprzedający uczeń</th>
             <th>Cena ucznia</th>
-            <th>Stan</th>
-            <th>Metoda płatności</th>
+            <th></th>
         </tr>
         <tr>
                 <td><input name="title" type="text" value="<%= book.title %>" required></td>
                 <td><input name="pupil" type="text" value="<%= book.pupil %>"" required></td>
                 <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" min="10" max="100" required></td>
-                <td>
-                    <select value="<%= book.status %>" name="status">
-                        <option value="Nie sprzedana" <%= book.status === 'Nie sprzedana' ? 'selected' : '' %>>Nie sprzedana</option>
-                        <option value="Sprzedana" <%= book.status === 'Sprzedana' ? 'selected' : '' %>>Sprzedana</option>
-                    </select>
-                </td>
-                <td>
-                    <select value="<%= book.payment_method %>" name="payment_method">
-                        <option value="-" <%= book.payment_method === '-' ? 'selected' : '' %>>-</option>
-                        <option value="Gotówka" <%= book.payment_method === 'Gotówka' ? 'selected' : '' %>>Gotówka</option>
-                        <option value="BLIK" <%= book.payment_method === 'BLIK' ? 'selected' : '' %>>BLIK</option>
-                    </select>
-                </td>
                 <td><button type="submit" name="ID" value=<%= book.ID %>>Zapisz</button></td>
         </tr>
     </table>

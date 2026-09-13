@@ -41,7 +41,7 @@ const sold_prepare = database.prepare("SELECT COUNT(title) AS sold FROM books WH
 const all_money_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE status = 'Sprzedana'")
 const login_data_prepare = database.prepare("SELECT uID, password, salt FROM users WHERE username = ?")
 const new_book_prepare = database.prepare("INSERT INTO books (title, pupil, pupil_price, commision, status, add_date) VALUES (?, ?, ?, ?, ?, ?)",)
-const update_book_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ?, status = ?, payment_method = ? WHERE ID = ?")
+const update_book_preapre = database.prepare("UPDATE books SET title = ?, pupil = ?, pupil_price = ?, commision = ? WHERE ID = ?")
 const book_by_id_prepare = database.prepare("SELECT * FROM books WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
 const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
@@ -49,6 +49,7 @@ const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money 
 const all_paymements_commision_preapre = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
 const sell_book_prepare = database.prepare("UPDATE books SET status = 'Sprzedana', payment_method = ? WHERE ID = ? AND status = 'Nie sprzedana'")
+const cancel_book_sale_prepare = database.prepare("UPDATE books SET status = 'Nie sprzedana', payment_method = '-' WHERE ID = ? AND status = 'Sprzedana'")
 const user_by_id_prepare = database.prepare("SELECT username FROM users WHERE uID = ?")
 
 
@@ -220,9 +221,9 @@ app.post("/book/change", (req, res)=>{
     }
     else if(req.body.ID){
         let book = book_by_id_prepare.get(parseInt(req.body.ID))
-        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę ${req.body.ID} z:{\ntitle: ${book.title}\npupil: ${book.pupil}\npupil_price: ${book.pupil_price}\nstatus: ${book.status}\npayment_method: ${book.payment_method}\n}`)
-        update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), req.body.status, req.body.payment_method, parseInt(req.body.ID))
-        log("log.log", `na :{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\nstatus: ${req.body.status}\npayment_method: ${req.body.payment_method}\n}`)
+        log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} zmienił książkę ${req.body.ID} z:{\ntitle: ${book.title}\npupil: ${book.pupil}\npupil_price: ${book.pupil_price}\n}`)
+        update_book_preapre.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), parseInt(req.body.ID))
+        log("log.log", `na :{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\n}`)
         return res.redirect("/")
     }
 })
@@ -233,16 +234,16 @@ app.get("/book/sell/confirm", (req, res)=>{
     }
     if(req.query.idC){
         res.render(__dirname+"/templates/confirm.ejs", {
-            book: book_by_id_prepare.get(req.query.idC),
-            payment_method: "gotówkę",
+            header_text: `Sprzedać książkę ${req.query.idC} za gotówkę`,
+            action: "/book/sell",
             query: req.query
         })
     }
 
     else if(req.query.idB){
         res.render(__dirname+"/templates/confirm.ejs", {
-            book: book_by_id_prepare.get(req.query.idB),
-            payment_method: "BLIK",
+            header_text: `Sprzedać książkę ${req.query.idB} za BLIK`,
+            action: "/book/sell",
             query: req.query
         })
     }
@@ -276,6 +277,39 @@ app.get("/book/sell/error", (req, res)=>{
     res.render(__dirname+"/templates/error", {
         title: "błąd sprzedaży",
         error: "Upewnij się, że podałeś poprawny numer książki oraz że książka nie została już sprzedana. Jeżeli ten błąd się powtarza, skontaktuj się niezwłocznie z działem programistów."
+    })
+})
+
+app.get("/book/sale_cancel/confirm", (req, res)=>{
+    if(!req.session.user){
+        res.redirect("/login")
+    }
+    return res.render(__dirname+"/templates/confirm.ejs",{
+        header_text: `Odwołać sprzedaż książki ${req.query.id_cancel}`,
+        action: "/book/sale_cancel",
+        query: req.query
+    })
+})
+
+app.post("/book/sale_cancel", (req, res)=>{
+    if(!req.session.user){
+        res.redirect("/login")
+    }
+    if(cancel_book_sale_prepare.run(parseInt(req.body.id_cancel)).changes != 1){
+        log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował odwołać sprzedaż książki ${req.body.id_cancel}, błąd odwołania`)
+        return res.redirect("/book/sale_cancel/error")
+    }
+    log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} odwołał sprzedaż książki ${req.body.id_cancel}`)
+    return res.redirect("/")
+})
+
+app.get("/book/sale_cancel/error", (req, res)=>{
+    if(!req.session.user){
+        res.redirect("/login")
+    }
+    res.render(__dirname+"/templates/error", {
+        title: "błąd odwołania sprzedaży",
+        error: "Upewnij się, że podałeś poprawny numer książki oraz że książka jest oznaczona jako sprzedana. Jeżeli ten błąd się powtarza, skontaktuj się niezwłocznie z działem programistów."
     })
 })
 
