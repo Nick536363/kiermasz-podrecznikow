@@ -127,15 +127,15 @@ button:active {
     <form method="post" action="/book/add">
         <div>
             <label for="title">Tytuł</label>
-            <input type="text" name="title" minlength="15" required>
+            <input type="text" name="title" required>
         </div>
         <div>
             <label for="pupil">Uczeń</label>
-            <input type="text" name="pupil" minlength="15" required>
+            <input type="text" name="pupil" required>
         </div>
         <div>
             <label for="pupil_price">Cena ucznia</label>
-            <input type="number" name="pupil_price" min="10" max="50" required>
+            <input type="number" name="pupil_price" min="10" max="100" required>
         </div>
         <button type="submit">Dodaj</button>
     </form>

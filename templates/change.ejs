@@ -177,7 +177,7 @@ button:active {
             <form method="post" action="/book/change">
                 <td><input name="title" type="text" value="<%= book.title %>" required></td>
                 <td><input name="pupil" type="text" value="<%= book.pupil %>"" required></td>
-                <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" required></td>
+                <td><input name="pupil_price" type="number" value="<%= book.pupil_price %>" min="10" max="100" required></td>
                 <td>
                     <select value="<%= book.status %>" name="status">
                         <option value="Nie sprzedana" <%= book.status === 'Nie sprzedana' ? 'selected' : '' %>>Nie sprzedana</option>

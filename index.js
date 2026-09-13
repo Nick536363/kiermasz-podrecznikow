@@ -2,15 +2,19 @@ const express = require("express")
 const session = require("express-session")
 const crypto = require("node:crypto")
 const { DatabaseSync } = require("node:sqlite")
+require("dotenv").config()
 const database = new DatabaseSync(__dirname+"/"+process.env.DB_NAME)
-
 const app = express()
 const PORT = process.env.PORT
 
 app.use(session({
     secret: process.env.SECRET,
-    saveUnitialized: false,
-    resave: false
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: "lax"
+    }
 }))
 
 app.use(express.json())
@@ -30,6 +34,7 @@ const book_by_id_prepare = database.prepare("SELECT * FROM books WHERE ID = ?")
 const search_on_pupil_prepare = database.prepare("SELECT * FROM books WHERE pupil LIKE ?")
 const search_on_book_prepare = database.prepare("SELECT * FROM books WHERE title LIKE ?")
 const all_payments_prepare = database.prepare("SELECT SUM(pupil_price) AS money FROM books WHERE payment_method=? AND status = 'Sprzedana'")
+const all_paymements_commision_preapre = database.prepare("SELECT SUM(commision) AS commision FROM books WHERE payment_method=? AND status = 'Sprzedana'")
 const books_by_payment_prepare = database.prepare("SELECT * FROM books WHERE payment_method LIKE ?")
 
 
@@ -45,8 +50,8 @@ app.get("/", (req, res) => {
     const commision = commision_prepare.get()
     const all_cash = all_payments_prepare.get("Gotówka")
     const all_blik = all_payments_prepare.get("BLIK")
-    const commision_cash = Math.floor(all_cash.money/10)
-    const commision_blik = Math.floor(all_blik.money/10)
+    const commision_cash = all_paymements_commision_preapre.get("Gotówka").commision
+    const commision_blik = all_paymements_commision_preapre.get("BLIK").commision
     let sell_info = {
         sum_books: all_books.sum_books,
         non_sold: non_sold.not_sold,
@@ -94,9 +99,9 @@ app.post("/login", (req, res) => {
         return
     }
     const salt = data.salt
-    const hashed_passwd = crypto.scryptSync(req.body.passwd, salt, 64).toString("hex")
-    if(hashed_passwd == data.password){
-        req.session.user = crypto.scryptSync(data.uID.toString(), salt, 64).toString("hex")
+    const hashed_passwd = crypto.scryptSync(req.body.passwd, salt, 64)
+    if(crypto.timingSafeEqual(Buffer.from(data.password, "hex"), hashed_passwd)){
+        req.session.user = data.uID
         return res.redirect("/")
     }
     return res.redirect("/login")
