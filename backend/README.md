@@ -8,6 +8,7 @@ This file should look something like this:
 
 ```.env
 DATABASE_URL="<URL_TO_POSTGRES>"
+FRONTEND_URL="<URL_TO_FRONTEND>"
 
 ROOT_PASSWORD="<PASSWORD_TO_ROOT_USER>"
 
