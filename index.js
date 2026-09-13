@@ -136,9 +136,13 @@ app.post("/book/add", (req, res)=>{
         return res.redirect("/login")
     }
     let date = new Date().format("Y-MM-dd")
-    if(parseInt(req.body.pupil_price) < 10){
+    let price = Number(req.body.pupil_price)
+    if(!Number.isInteger(price) || price < 10 || price > 100){
         log("warning.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} spróbował dodać książke z ceną niedozwoloną (${req.body.pupil_price})`)
-        res.redirect("/")
+        return res.render(__dirname+"/templates/error.ejs",{
+            title: "błąd sprzedaży",
+            error: "Książka nie została wpisana w system. Próba wpisania niedozwolonej ceny została zapisana."
+        })
     }
     new_book_prepare.run(req.body.title, req.body.pupil, parseInt(req.body.pupil_price), Math.floor(parseInt(req.body.pupil_price)*COMMISION_PERCENT), "Nie sprzedana", date)
     log("log.log", `User ${user_by_id_prepare.get(req.session.user).username} z ${req.ip} dodał nową książkę:{\ntitle: ${req.body.title}\npupil: ${req.body.pupil}\npupil_price: ${parseInt(req.body.pupil_price)}\n}`)
@@ -270,7 +274,7 @@ app.get("/book/sell/error", (req, res)=>{
         res.redirect("/login")
     }
     res.render(__dirname+"/templates/error", {
-        title: "BŁĄD SPRZEDAŻY",
+        title: "błąd sprzedaży",
         error: "Upewnij się, że podałeś poprawny numer książki oraz że książka nie została już sprzedana. Jeżeli ten błąd się powtarza, skontaktuj się niezwłocznie z działem programistów."
     })
 })
