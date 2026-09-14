@@ -7,7 +7,9 @@
  */
 
 import { NavLink, Outlet } from "react-router-dom";
+
 import { useAuth } from "@/features/auth/useAuth";
+import { Button } from "@/components/ui/Button";
 
 const NAV_LINK_CLASS = "block rounded-md px-3 py-2 text-sm transition-colors";
 
@@ -44,13 +46,9 @@ export function DashboardLayout() {
 					<p className="px-3 text-xs text-[#8A8577]">
 						Logged in as: <span className="text-[#C7C2B4]">{user?.name}</span>
 					</p>
-					<button
-						type="button"
-						onClick={logout}
-						className="mt-2 w-full rounded-md px-3 py-2 text-left text-sm text-[#C7C2B4] transition-colors hover:bg-[#2A382F] hover:text-[#F6F4EF]"
-					>
+					<Button type="button" onClick={logout} variant="danger">
 						Logout
-					</button>
+					</Button>
 				</div>
 			</aside>
 

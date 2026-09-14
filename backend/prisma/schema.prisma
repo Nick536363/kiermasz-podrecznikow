@@ -24,13 +24,13 @@ model User {
 }
 
 model Listing {
-    id              Int         @id     @default(autoincrement())
+    id              Int         @id         @default(autoincrement())
     name            String
     description     String
     seller          String
-    price           String
-    originalPrice   String
-    createdAt       DateTime            @default(now())
+    price           Decimal     @db.Money
+    originalPrice   Decimal     @db.Money
+    createdAt       DateTime                @default(now())
     updatedAt       DateTime
     authorId        Int?
 

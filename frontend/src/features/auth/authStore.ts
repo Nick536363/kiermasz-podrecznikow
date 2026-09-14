@@ -7,6 +7,7 @@
  */
 
 import { create } from "zustand";
+
 import type { User } from "@/types/api";
 
 type AuthState = {

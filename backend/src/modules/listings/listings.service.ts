@@ -14,12 +14,27 @@ import { Prisma } from '@/db/generated/client.js';
 import { CreateListingSchema, UpdateListingSchema } from './listings.schemas.js';
 
 /**
+ * @description Serializes listings from database (Decimal -> number).
+ * @param listing Listing JSON
+ * @returns Serialized listing
+ */
+function serializeListing<T extends { price: unknown; originalPrice?: unknown }>(listing: T) {
+    return {
+        ...listing,
+        price: Number(listing.price),
+        ...(listing.originalPrice !== undefined && {
+            originalPrice: Number(listing.originalPrice),
+        }),
+    };
+}
+
+/**
  * @param {number} id Author id
  * @param {CreateListingSchema} data Listing data
  * @returns Created listing data
  */
 export async function createListing(id: number, data: z.infer<typeof CreateListingSchema>) {
-    return prisma.listing.create({
+    const listing = await prisma.listing.create({
         data: {
             name: data.name,
             description: data.description,
@@ -30,6 +45,8 @@ export async function createListing(id: number, data: z.infer<typeof CreateListi
             authorId: id,
         },
     });
+
+    return serializeListing(listing);
 }
 
 /**
@@ -52,7 +69,7 @@ export async function listListings(page: number, limit: number, authorId?: numbe
         prisma.listing.count({ where }),
     ]);
 
-    return { listings, total, page, limit };
+    return { listings: listings.map(serializeListing), total, page, limit };
 }
 
 /**
@@ -61,7 +78,9 @@ export async function listListings(page: number, limit: number, authorId?: numbe
  * @returns Listing data
  */
 export async function getListing(id: number) {
-    return prisma.listing.findUnique({ where: { id } });
+    const listing = await prisma.listing.findUnique({ where: { id } });
+
+    return listing ? serializeListing(listing) : null;
 }
 
 /**
@@ -78,7 +97,7 @@ export async function updateListing(id: number, input: z.infer<typeof UpdateList
         data,
     });
 
-    return listing;
+    return serializeListing(listing);
 }
 
 /**
@@ -86,5 +105,7 @@ export async function updateListing(id: number, input: z.infer<typeof UpdateList
  * @returns Deleted listing data
  */
 export async function deleteListing(id: number) {
-    return prisma.listing.delete({ where: { id } });
+    const listing = await prisma.listing.delete({ where: { id } });
+
+    return serializeListing(listing);
 }

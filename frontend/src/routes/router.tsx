@@ -16,6 +16,7 @@ import { LoginForm } from "@/features/auth/LoginForm";
 import { ListingsTable } from "@/features/listings/ListingsTable";
 import { ListingForm } from "@/features/listings/ListingForm";
 import { UsersTable } from "@/features/users/UsersTable";
+import { UserForm } from "@/features/users/UserForm";
 
 export const router = createBrowserRouter([
 	// PUBLIC
@@ -45,7 +46,10 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				element: <DashboardLayout />,
-				children: [{ path: "/users", element: <UsersTable /> }],
+				children: [
+					{ path: "/users", element: <UsersTable /> },
+					{ path: "/users/new", element: <UserForm /> },
+				],
 			},
 		],
 	},

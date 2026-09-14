@@ -53,8 +53,8 @@ export type Listing = {
 	name: string;
 	description: string;
 	seller: string;
-	price: string;
-	originalPrice: string;
+	price: number;
+	originalPrice: number;
 	createdAt: string;
 	updatedAt: string;
 	authorId: number;
@@ -64,8 +64,8 @@ export type CreateListingInput = {
 	name: string;
 	description: string;
 	seller: string;
-	price: string;
-	originalPrice: string;
+	price: number;
+	originalPrice: number;
 };
 
 export type UpdateListingInput = {

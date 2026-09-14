@@ -8,11 +8,13 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
 import { useListings, useDeleteListing } from "./useListings";
 import { ListingCard } from "./ListingCard";
 import { useAuthStore } from "@/features/auth/authStore";
+import { Button } from "@/components/ui/Button";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 6;
 
 export function ListingsTable() {
 	const [page, setPage] = useState(1);
@@ -83,27 +85,27 @@ export function ListingsTable() {
 
 					{totalPages > 1 && (
 						<div className="mt-6 flex items-center justify-center gap-4 text-sm text-[#5C5A4E]">
-							<button
+							<Button
 								type="button"
 								onClick={() => setPage((current) => Math.max(1, current - 1))}
 								disabled={page === 1}
-								className="disabled:opacity-40"
+								variant="ghost"
 							>
 								Previous
-							</button>
+							</Button>
 							<span>
 								Page {page} of {totalPages}
 							</span>
-							<button
+							<Button
 								type="button"
 								onClick={() =>
 									setPage((current) => Math.min(totalPages, current + 1))
 								}
 								disabled={page === totalPages}
-								className="disabled:opacity-40"
+								variant="ghost"
 							>
 								Next
-							</button>
+							</Button>
 						</div>
 					)}
 				</>

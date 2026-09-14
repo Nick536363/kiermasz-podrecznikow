@@ -7,10 +7,13 @@
  */
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
 import { useUsers, useDeleteUser } from "./useUsers";
 import { useAuthStore } from "@/features/auth/authStore";
+import { Button } from "@/components/ui/Button";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 6;
 
 export function UsersTable() {
 	const [page, setPage] = useState(1);
@@ -28,7 +31,15 @@ export function UsersTable() {
 
 	return (
 		<div>
-			<h1 className="font-serif text-2xl text-[#1F2A24]">Users</h1>
+			<div className="flex items-center justify-between">
+				<h1 className="font-serif text-2xl text-[#1F2A24]">Users</h1>
+				<Link
+					to="/users/new"
+					className="rounded-md bg-[#1F2A24] px-4 py-2 text-sm font-medium text-[#F6F4EF] hover:bg-[#2A382F]"
+				>
+					Add user
+				</Link>
+			</div>
 
 			{isLoading && <p className="mt-8 text-sm text-[#5C5A4E]">Loading...</p>}
 
@@ -91,27 +102,27 @@ export function UsersTable() {
 
 			{totalPages > 1 && (
 				<div className="mt-6 flex items-center justify-center gap-4 text-sm text-[#5C5A4E]">
-					<button
+					<Button
 						type="button"
 						onClick={() => setPage((current) => Math.max(1, current - 1))}
 						disabled={page === 1}
-						className="disabled:opacity-40"
+						variant="ghost"
 					>
 						Previous
-					</button>
+					</Button>
 					<span>
 						Page {page} of {totalPages}
 					</span>
-					<button
+					<Button
 						type="button"
 						onClick={() =>
 							setPage((current) => Math.min(totalPages, current + 1))
 						}
 						disabled={page === totalPages}
-						className="disabled:opacity-40"
+						variant="ghost"
 					>
 						Next
-					</button>
+					</Button>
 				</div>
 			)}
 		</div>

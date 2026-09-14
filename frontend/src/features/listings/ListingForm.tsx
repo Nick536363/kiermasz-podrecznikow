@@ -8,13 +8,18 @@
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import { useCreateListing, useUpdateListing, useListing } from "./useListings";
 import type { Listing } from "@/types/api";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 type ListingFormFieldsProps = {
 	listingId?: number;
 	initialData?: Listing;
 };
+
+const MARGIN = 0.2;
 
 function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 	const isEditMode = listingId !== undefined;
@@ -25,9 +30,9 @@ function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 		initialData?.description ?? "",
 	);
 	const [seller, setSeller] = useState(initialData?.seller ?? "");
-	const [price, setPrice] = useState(initialData?.price ?? "0");
+	const [price, setPrice] = useState(initialData?.price ?? 0);
 	const [originalPrice, setOriginalPrice] = useState(
-		initialData?.originalPrice ?? "0",
+		initialData?.originalPrice ?? 0,
 	);
 
 	const createMutation = useCreateListing();
@@ -42,6 +47,13 @@ function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 		);
 	}
 
+	function calculatePrice(price: number) {
+		setOriginalPrice(price);
+
+		const priceWithMargin = Math.floor(price * (1 + MARGIN));
+		setPrice(priceWithMargin);
+	}
+
 	return (
 		<div className="max-w-lg">
 			<h1 className="font-serif text-2xl text-[#1F2A24]">
@@ -51,14 +63,13 @@ function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 			<form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
 				<label className="flex flex-col gap-1.5">
 					<span className="text-sm text-[#1F2A24]">Title</span>
-					<input
+					<Input
 						type="text"
 						value={name}
 						onChange={(event) => setName(event.target.value)}
 						required
 						minLength={2}
 						maxLength={100}
-						className="rounded-md border border-[#D8D4C6] bg-white px-3 py-2 text-sm text-[#1F2A24] outline-none focus:border-[#8C6A3F] focus:ring-1 focus:ring-[#8C6A3F]"
 					/>
 				</label>
 
@@ -77,40 +88,25 @@ function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 
 				<label className="flex flex-col gap-1.5">
 					<span className="text-sm text-[#1F2A24]">Seller</span>
-					<input
+					<Input
 						type="text"
 						value={seller}
 						onChange={(event) => setSeller(event.target.value)}
 						required
 						minLength={2}
 						maxLength={100}
-						className="rounded-md border border-[#D8D4C6] bg-white px-3 py-2 text-sm text-[#1F2A24] outline-none focus:border-[#8C6A3F] focus:ring-1 focus:ring-[#8C6A3F]"
-					/>
-				</label>
-
-				<label className="flex flex-col gap-1.5">
-					<span className="text-sm text-[#1F2A24]">Price</span>
-					<input
-						type="number"
-						value={originalPrice}
-						onChange={(event) => setOriginalPrice(event.target.value)}
-						required
-						minLength={2}
-						maxLength={100}
-						className="rounded-md border border-[#D8D4C6] bg-white px-3 py-2 text-sm text-[#1F2A24] outline-none focus:border-[#8C6A3F] focus:ring-1 focus:ring-[#8C6A3F]"
 					/>
 				</label>
 
 				<label className="flex flex-col gap-1.5">
 					<span className="text-sm text-[#1F2A24]">Price after *Tax*</span>
-					<input
+					<Input
 						type="number"
+						step="0.01"
+						min="0"
 						value={price}
-						onChange={(event) => setPrice(event.target.value)}
+						onChange={(event) => calculatePrice(+event.target.value)}
 						required
-						minLength={2}
-						maxLength={100}
-						className="rounded-md border border-[#D8D4C6] bg-white px-3 py-2 text-sm text-[#1F2A24] outline-none focus:border-[#8C6A3F] focus:ring-1 focus:ring-[#8C6A3F]"
 					/>
 				</label>
 
@@ -121,24 +117,21 @@ function ListingFormFields({ listingId, initialData }: ListingFormFieldsProps) {
 				)}
 
 				<div className="mt-2 flex gap-3">
-					<button
-						type="submit"
-						disabled={mutation.isPending}
-						className="rounded-md bg-[#1F2A24] px-4 py-2.5 text-sm font-medium text-[#F6F4EF] hover:bg-[#2A382F] disabled:opacity-60"
-					>
+					<Button type="submit" disabled={mutation.isPending}>
 						{mutation.isPending
 							? "Saving..."
 							: isEditMode
 								? "Save edits..."
 								: "Add listing"}
-					</button>
-					<button
+					</Button>
+					<Button
 						type="button"
 						onClick={() => navigate(-1)}
 						className="rounded-md px-4 py-2.5 text-sm text-[#5C5A4E] hover:bg-[#EDEAE0]"
+						variant="ghost"
 					>
 						Cancel
-					</button>
+					</Button>
 				</div>
 			</form>
 		</div>

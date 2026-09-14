@@ -10,6 +10,10 @@ import { getAccessToken, setAccessToken } from "@/features/auth/authStore";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+/**
+ * @description Asks server to refresh user's token and passes his credentials.
+ * @returns Refreshed token
+ */
 async function refreshAccessToken(): Promise<string | null> {
 	const result = await fetch(`${BASE_URL}/auth/refresh`, {
 		method: "POST",
@@ -27,6 +31,12 @@ async function refreshAccessToken(): Promise<string | null> {
 	return accessToken;
 }
 
+/**
+ * @description Wraper around requesting data from server, also adds an auth token (JWT).
+ * @param {string} path Path to fetch
+ * @param {RequestInit} options Request header
+ * @returns Request response
+ */
 export async function apiFetch<T>(
 	path: string,
 	options: RequestInit = {},
@@ -37,7 +47,7 @@ export async function apiFetch<T>(
 		fetch(`${BASE_URL}${path}`, {
 			...options,
 			headers: {
-				"Content-Type": "application/json",
+				...(options.body ? { "Content-Type": "application/json" } : {}),
 				...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
 				...options.headers,
 			},
